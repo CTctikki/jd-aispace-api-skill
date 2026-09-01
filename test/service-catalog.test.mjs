@@ -10,7 +10,10 @@ class FakeClient {
   async call(request) {
     this.calls.push(request);
     if (request.api.endsWith("getToolList")) return { data: [] };
+    if (request.api.endsWith("getExpertList")) return { data: [] };
+    if (request.api.endsWith("queryPublishedAppList")) return { data: [] };
     if (request.api.endsWith("listAiSpacePurchase")) return { data: [] };
+    if (request.api.endsWith("queryExpertMapByServiceCodes")) return { data: {} };
     if (request.api.endsWith("queryServiceByCode")) {
       return { data: { serviceCode: request.payload.request.serviceCode, aiSpaceToolParadigm: "FLOW" } };
     }
@@ -29,6 +32,8 @@ test("catalog uses required portal request", async () => {
       bizRequest: { pageNum: 1, pageSize: 100 },
     },
   });
+  assert.equal(client.calls.some((call) => call.api.endsWith("getExpertList")), true);
+  assert.equal(client.calls.some((call) => call.api.endsWith("queryPublishedAppList")), true);
   const tool = result.tools.find((entry) => entry.serviceCode === "FW_GOODS-1970202");
   assert.equal(tool.paradigm, "FLOW");
   assert.equal(tool.executionMode, "workflow_stream");
@@ -38,6 +43,47 @@ test("catalog uses required portal request", async () => {
     "confirmation_validation_required",
   );
   assert.equal(result.summary.withServiceCode, 8);
+});
+
+test("catalog maps purchased expert services to callable agent metadata", async () => {
+  const client = { async call(request) {
+    if (request.api.endsWith("getToolList")) return { data: [] };
+    if (request.api.endsWith("getExpertList")) return { data: [] };
+    if (request.api.endsWith("queryPublishedAppList")) return { data: [] };
+    if (request.api.endsWith("listAiSpacePurchase")) return { data: [{
+      serviceCode: "FW_TEST_EXPERT",
+      serviceName: "ChatExcel数据分析",
+      aiSpaceToolParadigm: "EXPERT",
+      publishSource: 1,
+    }] };
+    if (request.api.endsWith("queryExpertMapByServiceCodes")) {
+      assert.deepEqual(request.payload, { request: { serviceCodes: ["FW_TEST_EXPERT"] } });
+      return { data: { FW_TEST_EXPERT: {
+        agentId: "agent-public-id",
+        expertName: "ChatExcel",
+        expertAvatar: "https://example.com/avatar.png",
+        expertIntroduction: "Spreadsheet assistant",
+        account: "private",
+      } } };
+    }
+    if (request.api.endsWith("queryServiceByCode")) return { data: {
+      serviceCode: request.payload.request.serviceCode,
+      aiSpaceToolParadigm: "EXPERT",
+    } };
+    throw new Error(`Unexpected API: ${request.api}`);
+  } };
+  const result = await new ServiceCatalog({ client }).discover();
+  const tool = result.tools.find((entry) => entry.name === "ChatExcel数据分析");
+  assert.equal(tool.serviceCode, "FW_TEST_EXPERT");
+  assert.equal(tool.executionMode, "aispace_conversation");
+  assert.deepEqual(tool.agent, {
+    agentId: "agent-public-id",
+    name: "ChatExcel",
+    description: "Spreadsheet assistant",
+    avatarUrl: "https://example.com/avatar.png",
+  });
+  assert.equal(JSON.stringify(tool).includes("private"), false);
+  assert.equal(result.source.mappedExpertCount, 1);
 });
 
 test("catalog returns fresh memory cache without new calls", async () => {

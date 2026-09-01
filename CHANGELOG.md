@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.2 - 2026-09-01
+
+- Expand catalog discovery to official experts, purchased services, published Flow apps, and purchased expert Agent metadata.
+
 ## 0.2.1 - 2026-09-01
 
 - Enrich AI 评价回复托管 inspection with its dedicated status, agreement, reply-tone, and text-length APIs.

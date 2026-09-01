@@ -5,7 +5,7 @@ Use this process when AI 经营中心 adds a tool or changes an existing one.
 ## Detect Changes
 
 1. Start the local gateway with an authorized, stopped merchant profile.
-2. Run `npm run catalog:check`.
+2. Run `npm run catalog:check`. Discovery checks official tools, official experts, purchased services, and published self-built Flow apps. Purchased `EXPERT` services are also mapped to their AI Space Agent metadata.
 3. Review added, removed, and changed entries. Catalog changes alone do not prove execution support.
 
 ## Add Or Update An Adapter

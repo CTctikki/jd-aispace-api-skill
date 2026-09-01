@@ -51,6 +51,16 @@ function summarizeResolvedService(data = {}) {
   };
 }
 
+function summarizeAgent(data = {}) {
+  if (!data.agentId) return null;
+  return {
+    agentId: String(data.agentId),
+    name: data.expertName || "",
+    description: data.expertIntroduction || "",
+    avatarUrl: data.expertAvatar || "",
+  };
+}
+
 async function mapWithConcurrency(items, concurrency, mapper) {
   const results = new Array(items.length);
   let cursor = 0;
@@ -108,17 +118,24 @@ export class ServiceCatalog {
   async discover({ refresh = false } = {}) {
     const cached = await this.readCache();
     if (!refresh && this.isFresh(cached)) return { ...cached, cache: "hit" };
-    const [portalResult, marketResult] = await Promise.all([
+    const portalRequest = {
+      request: {
+        belongParam: { client: "WEB" },
+        bizRequest: { pageNum: 1, pageSize: 100 },
+      },
+    };
+    const [portalResult, expertResult, marketResult, appResult] = await Promise.all([
       this.call("portal.tools.list", {
-        request: {
-          belongParam: { client: "WEB" },
-          bizRequest: { pageNum: 1, pageSize: 100 },
-        },
+        ...portalRequest,
       }),
+      this.call("portal.experts.list", portalRequest),
       this.call("portal.purchases.list", { request: {} }),
+      this.call("portal.apps.list", { request: {} }),
     ]);
     const portalTools = Array.isArray(portalResult.data) ? portalResult.data : [];
+    const portalExperts = Array.isArray(expertResult.data) ? expertResult.data : [];
     const marketServices = Array.isArray(marketResult.data) ? marketResult.data : [];
+    const publishedApps = Array.isArray(appResult.data) ? appResult.data : [];
     const serviceCodes = [...new Set([
       ...TOOL_REGISTRY.map((tool) => tool.serviceCode),
       ...portalTools.map((tool) => tool.code),
@@ -133,6 +150,21 @@ export class ServiceCatalog {
       }
     });
     const resolvedByCode = new Map(resolvedResults);
+    const expertServiceCodes = marketServices
+      .filter((service) => String(service.aiSpaceToolParadigm || "").toUpperCase() === "EXPERT")
+      .map((service) => service.serviceCode)
+      .filter(Boolean);
+    let expertMap = {};
+    if (expertServiceCodes.length > 0) {
+      try {
+        const result = await this.call("portal.experts.map", {
+          request: { serviceCodes: expertServiceCodes },
+        });
+        if (result.data && typeof result.data === "object" && !Array.isArray(result.data)) {
+          expertMap = result.data;
+        }
+      } catch {}
+    }
     const portalByCode = new Map(portalTools.filter((tool) => tool.code).map((tool) => [tool.code, tool]));
     const serviceByCode = new Map(marketServices.filter((service) => service.serviceCode).map((service) => [service.serviceCode, service]));
     const serviceByName = new Map(marketServices.filter((service) => service.serviceName).map((service) => [service.serviceName, service]));
@@ -163,6 +195,7 @@ export class ServiceCatalog {
           hasJmAiTerminal: resolved.hasJmAiTerminal ?? null,
         },
         service: serviceCode ? resolved : null,
+        agent: summarizeAgent(expertMap[serviceCode]),
       };
     });
     for (const service of marketServices) {
@@ -185,6 +218,7 @@ export class ServiceCatalog {
           hasJmAiTerminal: resolved.hasJmAiTerminal ?? null,
         },
         service: resolved,
+        agent: summarizeAgent(expertMap[service.serviceCode]),
       });
     }
     const modes = [...new Set(tools.map((tool) => tool.executionMode))];
@@ -194,7 +228,10 @@ export class ServiceCatalog {
       source: {
         appIds: APP_IDS,
         portalToolCount: portalTools.length,
+        portalExpertCount: portalExperts.length,
         marketServiceCount: marketServices.length,
+        publishedAppCount: publishedApps.length,
+        mappedExpertCount: Object.values(expertMap).filter((entry) => entry?.agentId).length,
         resolvedServiceCount: resolvedResults.filter(([, result]) => result.status === "resolved").length,
       },
       summary: {

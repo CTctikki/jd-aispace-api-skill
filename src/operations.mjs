@@ -13,9 +13,24 @@ export const OPERATIONS = Object.freeze({
     api: "dsm.support.superassist.expertPanelFacadeService.getToolList",
     effect: "read",
   },
+  "portal.experts.list": {
+    appId: APP_IDS.portal,
+    api: "dsm.support.superassist.expertPanelFacadeService.getExpertList",
+    effect: "read",
+  },
+  "portal.apps.list": {
+    appId: APP_IDS.portal,
+    api: "dsm.oxygenflow.designer.app.queryPublishedAppList",
+    effect: "read",
+  },
   "portal.purchases.list": {
     appId: APP_IDS.portal,
     api: "dsm.fuwu.search.SearchUpgradeDsmProvider.listAiSpacePurchase",
+    effect: "read",
+  },
+  "portal.experts.map": {
+    appId: APP_IDS.portal,
+    api: "dsm.fuwu.search.SearchUpgradeDsmProvider.queryExpertMapByServiceCodes",
     effect: "read",
   },
   "service.resolve": {
