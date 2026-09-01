@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.0 - 2026-09-01
+
+- Add an anonymous, read-only service-detail endpoint for descriptions, platform support, paradigms, and capability lists.
+- Add a sanitized public capability baseline for all 18 third-party tools.
+- Add automated detail-change detection for future AI Market updates.
+
 ## 0.5.0 - 2026-09-01
 
 - Add confirmed, entitlement-gated launch-context preparation for already active AI Market services.

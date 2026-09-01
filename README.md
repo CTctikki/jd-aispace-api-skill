@@ -12,6 +12,7 @@
 | 历史任务查询及工作流结果引用恢复 | 已支持（只读） |
 | 已识别 6 类、26 个工具及真实服务代码 | 已支持 |
 | 京麦服务市场工具搜索与精确匹配 | 已支持（公开只读接口） |
+| 第三方工具公开详情与细分能力清单 | 已支持（匿名只读，18 个工具有基线） |
 | 服务订购/使用权限状态查询 | 已支持（登录后只读、身份脱敏） |
 | 已开通服务的启动上下文预检 | 已支持（需确认、仅返回域名与参数名，不返回签名值） |
 | 4 个官方商品工作流元数据与 AG-UI 流协议 | 已支持 |
@@ -83,6 +84,7 @@ Invoke-RestMethod http://127.0.0.1:17321/v1/workflows/product-detail-inspection 
 - `POST /v1/workflows/result`（只读结果回放）
 - `GET /v1/tasks`（只读任务历史，可恢复工作流 `threadId/runId`）
 - `GET /v1/marketplace/search?query=工具名`（公开服务市场精确检索，不使用店铺 Cookie）
+- `GET /v1/marketplace/services/FW_GOODS-...`（公开服务详情、端支持与细分能力）
 - `GET /v1/services/access?serviceCode=FW_GOODS-...`（只返回脱敏后的可用状态和操作类型）
 - `POST /v1/services/launch`（仅对已开通服务准备启动上下文；要求 `confirm=true`，不会订购或自动授权）
 
@@ -90,7 +92,7 @@ Invoke-RestMethod http://127.0.0.1:17321/v1/workflows/product-detail-inspection 
 
 ## 跟踪 AISpace 更新
 
-运行 `npm run marketplace:check` 校验 18 个第三方工具的公开服务代码，再运行 `npm run catalog:check` 检查登录后目录变化。确认协议并通过测试后，运行 `npm run catalog:update` 更新公开基线。详细流程见 [`references/maintenance.md`](references/maintenance.md)。
+运行 `npm run marketplace:check` 校验 18 个第三方工具的公开服务代码，运行 `npm run marketplace:details:check` 校验公开功能清单，再运行 `npm run catalog:check` 检查登录后目录变化。确认协议并通过测试后，使用对应的 `*:update` 命令更新公开基线。详细流程见 [`references/maintenance.md`](references/maintenance.md)。
 
 ## 安全设计
 

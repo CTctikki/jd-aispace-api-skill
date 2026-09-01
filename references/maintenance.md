@@ -5,10 +5,11 @@ Use this process when AI 经营中心 adds a tool or changes an existing one.
 ## Detect Changes
 
 1. Run `npm run marketplace:check` without a login to verify exact public service-code matches. The script is deliberately rate-limited.
-2. Start the local gateway with an authorized, stopped merchant profile.
-3. Run `npm run catalog:check`. Discovery checks official tools, official experts, purchased services, and published self-built Flow apps. Purchased `EXPERT` services are also mapped to their AI Space Agent metadata.
-4. For a missing or renamed third-party tool, query `GET /v1/marketplace/search?query=<exact name>&classify=tools`. Accept only an exact normalized name match; similar names are not interchangeable.
-5. Review added, removed, and changed entries. Catalog changes alone do not prove execution support.
+2. Run `npm run marketplace:details:check` without a login to detect public description, platform, paradigm, and capability-list changes for all third-party baseline tools.
+3. Start the local gateway with an authorized, stopped merchant profile.
+4. Run `npm run catalog:check`. Discovery checks official tools, official experts, purchased services, and published self-built Flow apps. Purchased `EXPERT` services are also mapped to their AI Space Agent metadata.
+5. For a missing or renamed third-party tool, query `GET /v1/marketplace/search?query=<exact name>&classify=tools`. Accept only an exact normalized name match; similar names are not interchangeable.
+6. Review added, removed, and changed entries. Catalog or public capability changes alone do not prove execution support.
 
 The gateway resolves service metadata serially with a short delay by default because concurrent bulk resolution can return business code `201` / `20008` (rate limited) and create false `unresolved` entries. Override `AISPACE_SERVICE_RESOLVE_CONCURRENCY`, `AISPACE_SERVICE_RESOLVE_DELAY_MS`, or `AISPACE_SERVICE_RESOLVE_RETRY_DELAY_MS` only when the environment has been verified to tolerate it.
 
@@ -29,7 +30,7 @@ The official AI Market container currently resolves metadata with `queryServiceB
 
 ## Update The Baseline
 
-After review and validation, run `npm run catalog:update`. Inspect the diff before committing. The baseline stores only tool metadata and must never contain runtime responses, account data, task IDs, or credentials.
+After review and validation, run `npm run marketplace:details:update` or `npm run catalog:update` for the changed source. Inspect the diff before committing. Baselines store only public or sanitized tool metadata and must never contain runtime responses, account data, task IDs, or credentials.
 
 ## Stop Conditions
 

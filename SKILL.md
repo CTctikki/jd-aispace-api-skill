@@ -11,6 +11,7 @@ Use the bundled local gateway instead of clicking through the merchant UI. Keep 
 
 - List current tools with `GET /v1/services?refresh=true`.
 - Search public 京麦服务市场 metadata with `GET /v1/marketplace/search?query=<name>&classify=tools`; prefer exact-name matches.
+- Inspect a public service description and capability list with `GET /v1/marketplace/services/<serviceCode>`; this does not require a merchant login.
 - Check whether the current account can use or request a service with `GET /v1/services/access?serviceCode=<code>`; the response omits account-specific tips.
 - Prepare the launch context of an already active service with `POST /v1/services/launch` and `confirm=true`; the response exposes only endpoint origins and query-key names.
 - Inspect an allowlisted workflow with `POST /v1/workflows/inspect`.
@@ -53,4 +54,4 @@ If execution returns `timedOut=true`, retain `threadId` and `runId`, then call `
 
 ## Maintain For AISpace Changes
 
-Run `npm run marketplace:check` and `npm run catalog:check` after AISpace changes. Read `references/maintenance.md` before changing adapters. Update only after behavior is observed with an authorized account, the protocol change is confirmed, and regression tests pass.
+Run `npm run marketplace:check`, `npm run marketplace:details:check`, and `npm run catalog:check` after AISpace changes. Read `references/maintenance.md` before changing adapters. Update only after behavior is observed with an authorized account, the protocol change is confirmed, and regression tests pass.

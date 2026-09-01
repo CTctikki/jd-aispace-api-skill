@@ -44,6 +44,11 @@ export const OPERATIONS = Object.freeze({
     api: "dsm.fuwu.search.SearchUpgradeDsmProvider.queryServiceList",
     effect: "read",
   },
+  "marketplace.detail": {
+    appId: APP_IDS.marketplace,
+    api: "dsm.jmmarket.remoting.dsm.service.GoodsDetailDsmProvider.getGoodsBaseInfo",
+    effect: "read",
+  },
   "service.access": {
     appId: APP_IDS.marketplace,
     api: "dsm.jmmarket.remoting.dsm.service.GoodsDsmProvider.queryServiceOpt",

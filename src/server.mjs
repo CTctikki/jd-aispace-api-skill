@@ -67,6 +67,13 @@ export function createServer({ gateway, token = "" }) {
         });
         return sendJson(response, 200, result);
       }
+      const marketplaceDetailMatch = url.pathname.match(/^\/v1\/marketplace\/services\/([^/]+)$/);
+      if (request.method === "GET" && marketplaceDetailMatch) {
+        const result = await gateway.inspectMarketplaceService(
+          decodeURIComponent(marketplaceDetailMatch[1]),
+        );
+        return sendJson(response, 200, result);
+      }
       if (request.method === "GET" && url.pathname === "/v1/services/access") {
         const result = await gateway.inspectServiceAccess(url.searchParams.get("serviceCode"));
         return sendJson(response, 200, result);

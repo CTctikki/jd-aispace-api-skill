@@ -9,6 +9,7 @@ import { ActivitySignupAdapter } from "./adapters/activity-signup.mjs";
 import { HostingAdapter } from "./adapters/hosting.mjs";
 import { TaskHistoryAdapter } from "./adapters/tasks.mjs";
 import { MarketplaceSearchAdapter } from "./adapters/marketplace-search.mjs";
+import { MarketplaceDetailAdapter } from "./adapters/marketplace-detail.mjs";
 import { ServiceAccessAdapter } from "./adapters/service-access.mjs";
 import { ServiceLaunchAdapter } from "./adapters/service-launch.mjs";
 import { DirectHttpTransport } from "./transports/direct-http.mjs";
@@ -44,6 +45,7 @@ const gateway = new AiSpaceGateway({
   activitySignupAdapter: new ActivitySignupAdapter({ client }),
   taskHistoryAdapter: new TaskHistoryAdapter({ client }),
   marketplaceSearchAdapter: new MarketplaceSearchAdapter({ client: publicMarketplaceClient }),
+  marketplaceDetailAdapter: new MarketplaceDetailAdapter({ client: publicMarketplaceClient }),
   serviceAccessAdapter,
   serviceLaunchAdapter: new ServiceLaunchAdapter({ client, accessAdapter: serviceAccessAdapter }),
 });

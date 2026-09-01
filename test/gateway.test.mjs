@@ -39,6 +39,17 @@ test("gateway delegates public marketplace search", async () => {
   });
 });
 
+test("gateway delegates public marketplace detail", async () => {
+  const gateway = new AiSpaceGateway({
+    client: {},
+    marketplaceDetailAdapter: { inspect: async (serviceCode) => ({ serviceCode, capabilities: [] }) },
+  });
+  assert.deepEqual(await gateway.inspectMarketplaceService("FW_GOODS-1977404"), {
+    serviceCode: "FW_GOODS-1977404",
+    capabilities: [],
+  });
+});
+
 test("gateway delegates sanitized service access inspection", async () => {
   const gateway = new AiSpaceGateway({
     client: {},

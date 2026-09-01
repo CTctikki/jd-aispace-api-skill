@@ -63,6 +63,27 @@ test("marketplace search endpoint is read-only", async () => {
   });
 });
 
+test("marketplace detail endpoint is public-data read-only", async () => {
+  const gateway = new AiSpaceGateway({
+    client: {},
+    marketplaceDetailAdapter: {
+      async inspect(serviceCode) {
+        return { serviceCode, capabilities: [{ name: "主图水印" }] };
+      },
+    },
+  });
+  await withServer(async (baseUrl) => {
+    const response = await fetch(`${baseUrl}/v1/marketplace/services/FW_GOODS-1977404`, {
+      headers: { authorization: "Bearer test-token" },
+    });
+    assert.equal(response.status, 200);
+    assert.deepEqual(await response.json(), {
+      serviceCode: "FW_GOODS-1977404",
+      capabilities: [{ name: "主图水印" }],
+    });
+  }, gateway);
+});
+
 test("service access endpoint returns sanitized state", async () => {
   const gateway = new AiSpaceGateway({
     client: {},

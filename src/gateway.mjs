@@ -12,6 +12,7 @@ export class AiSpaceGateway {
     activitySignupAdapter = null,
     taskHistoryAdapter = null,
     marketplaceSearchAdapter = null,
+    marketplaceDetailAdapter = null,
     serviceAccessAdapter = null,
     serviceLaunchAdapter = null,
   }) {
@@ -23,6 +24,7 @@ export class AiSpaceGateway {
     this.activitySignupAdapter = activitySignupAdapter;
     this.taskHistoryAdapter = taskHistoryAdapter;
     this.marketplaceSearchAdapter = marketplaceSearchAdapter;
+    this.marketplaceDetailAdapter = marketplaceDetailAdapter;
     this.serviceAccessAdapter = serviceAccessAdapter;
     this.serviceLaunchAdapter = serviceLaunchAdapter;
   }
@@ -56,6 +58,11 @@ export class AiSpaceGateway {
   searchMarketplace(input) {
     if (this.marketplaceSearchAdapter === null) throw new Error("marketplace search adapter is not configured");
     return this.marketplaceSearchAdapter.search(input);
+  }
+
+  inspectMarketplaceService(serviceCode) {
+    if (this.marketplaceDetailAdapter === null) throw new Error("marketplace detail adapter is not configured");
+    return this.marketplaceDetailAdapter.inspect(serviceCode);
   }
 
   inspectServiceAccess(serviceCode) {

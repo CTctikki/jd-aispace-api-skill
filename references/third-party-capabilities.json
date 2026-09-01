@@ -1,0 +1,930 @@
+[
+  {
+    "serviceCode": "FW_GOODS-1524405",
+    "name": "宜算发票自动开票",
+    "description": "宜算发票新功能上线，自动换开/冲红！一个sku自动拆分多个商品开票，自动实现订单开票、自动同步订单、自动回传电子发票至京东平台，电商智能发票管理，税局官方实时同步，店长必备，电商发票管家，已开发票查询",
+    "serviceType": 1,
+    "paradigm": "INDEPENDENCE",
+    "platforms": {
+      "pc": true,
+      "mobile": false
+    },
+    "chargeMode": 3,
+    "capabilities": [
+      {
+        "code": "fw_tag_46610",
+        "name": "电子发票",
+        "description": "数电发票对接",
+        "active": false,
+        "items": [
+          {
+            "code": "FW_GOODS-1524405-2",
+            "name": "体验版（全功能）",
+            "description": "",
+            "supported": true
+          },
+          {
+            "code": "FW_GOODS-1524405-4",
+            "name": "旗舰版-自动开票回传",
+            "description": "",
+            "supported": true
+          }
+        ]
+      },
+      {
+        "code": "fw_tag_56603",
+        "name": "开票",
+        "description": "自动开票、自动回传发票....",
+        "active": true,
+        "items": [
+          {
+            "code": "FW_GOODS-1524405-2",
+            "name": "体验版（全功能）",
+            "description": "",
+            "supported": true
+          },
+          {
+            "code": "FW_GOODS-1524405-4",
+            "name": "旗舰版-自动开票回传",
+            "description": "",
+            "supported": true
+          }
+        ]
+      },
+      {
+        "code": "fw_tag_46611",
+        "name": "自动开票",
+        "description": "订单自动开票",
+        "active": true,
+        "items": [
+          {
+            "code": "FW_GOODS-1524405-2",
+            "name": "体验版（全功能）",
+            "description": "",
+            "supported": true
+          },
+          {
+            "code": "FW_GOODS-1524405-4",
+            "name": "旗舰版-自动开票回传",
+            "description": "",
+            "supported": true
+          }
+        ]
+      },
+      {
+        "code": "fw_tag_59602",
+        "name": "发票冲红",
+        "description": "一键冲红、自动冲红",
+        "active": true,
+        "items": [
+          {
+            "code": "FW_GOODS-1524405-2",
+            "name": "体验版（全功能）",
+            "description": "",
+            "supported": true
+          },
+          {
+            "code": "FW_GOODS-1524405-4",
+            "name": "旗舰版-自动开票回传",
+            "description": "",
+            "supported": true
+          }
+        ]
+      },
+      {
+        "code": "fw_tag_59603",
+        "name": "自动回传",
+        "description": "已开发票自动回传",
+        "active": true,
+        "items": [
+          {
+            "code": "FW_GOODS-1524405-2",
+            "name": "体验版（全功能）",
+            "description": "",
+            "supported": true
+          },
+          {
+            "code": "FW_GOODS-1524405-4",
+            "name": "旗舰版-自动开票回传",
+            "description": "",
+            "supported": true
+          }
+        ]
+      },
+      {
+        "code": "fw_tag_59604",
+        "name": "国补开票",
+        "description": "国补订单自动备注开票",
+        "active": true,
+        "items": [
+          {
+            "code": "FW_GOODS-1524405-2",
+            "name": "体验版（全功能）",
+            "description": "",
+            "supported": true
+          },
+          {
+            "code": "FW_GOODS-1524405-4",
+            "name": "旗舰版-自动开票回传",
+            "description": "",
+            "supported": true
+          }
+        ]
+      },
+      {
+        "code": "fw_tag_59605",
+        "name": "自定义开票名称",
+        "description": "自定义开票货物名称、规格型号",
+        "active": true,
+        "items": [
+          {
+            "code": "FW_GOODS-1524405-2",
+            "name": "体验版（全功能）",
+            "description": "",
+            "supported": true
+          },
+          {
+            "code": "FW_GOODS-1524405-4",
+            "name": "旗舰版-自动开票回传",
+            "description": "",
+            "supported": true
+          }
+        ]
+      },
+      {
+        "code": "fw_tag_59601",
+        "name": "智能开票",
+        "description": "组合商品开票、合并开票、导入",
+        "active": true,
+        "items": [
+          {
+            "code": "FW_GOODS-1524405-2",
+            "name": "体验版（全功能）",
+            "description": "",
+            "supported": true
+          },
+          {
+            "code": "FW_GOODS-1524405-4",
+            "name": "旗舰版-自动开票回传",
+            "description": "",
+            "supported": true
+          }
+        ]
+      }
+    ],
+    "detailUrl": "https://fw.jd.com/market/new/detail/FW_GOODS-1524405"
+  },
+  {
+    "serviceCode": "FW_GOODS-1587201",
+    "name": "一呼客服质检",
+    "description": "自动智能质检聊天 / 异常问题实时告警提醒 / 店铺及客服服务评价分析/ 质检员工作量统计 / 店铺及客服接待异常统计",
+    "serviceType": 1,
+    "paradigm": "FLOW",
+    "platforms": {
+      "pc": true,
+      "mobile": false
+    },
+    "chargeMode": 3,
+    "capabilities": [],
+    "detailUrl": "https://fw.jd.com/market/new/detail/FW_GOODS-1587201"
+  },
+  {
+    "serviceCode": "FW_GOODS-1850002",
+    "name": "晓多AI训练场",
+    "description": "新客服培训入门，老客服能力提升利器。一键启动AI买家模拟对练, 全自动生成AI剧本，量身定制培训计划，多场景模拟真实接待环境。质培一体。实时反馈，系统打分，大幅缩短上岗时间，让客服快速成为销冠。",
+    "serviceType": 1,
+    "paradigm": "INDEPENDENCE",
+    "platforms": {
+      "pc": true,
+      "mobile": false
+    },
+    "chargeMode": 3,
+    "capabilities": [],
+    "detailUrl": "https://fw.jd.com/market/new/detail/FW_GOODS-1850002"
+  },
+  {
+    "serviceCode": "FW_GOODS-1864005",
+    "name": "ChatExcel数据分析",
+    "description": "ChatExcel 国内首款 AI Excel 产品，用户只需要和 AI 聊天对话，无需编写复杂的函数公式和代码，一键分析店铺经营数据，生成流量、转化、商品和复盘报告。",
+    "serviceType": 1,
+    "paradigm": "INDEPENDENCE",
+    "platforms": {
+      "pc": true,
+      "mobile": false
+    },
+    "chargeMode": 3,
+    "capabilities": [
+      {
+        "code": "fw_tag_56002",
+        "name": "AI数据分析",
+        "description": "通过分析生意与经营数据",
+        "active": true,
+        "items": [
+          {
+            "code": "FW_GOODS-1864005-1",
+            "name": "标准版",
+            "description": "",
+            "supported": true
+          }
+        ]
+      }
+    ],
+    "detailUrl": "https://fw.jd.com/market/new/detail/FW_GOODS-1864005"
+  },
+  {
+    "serviceCode": "FW_GOODS-1871009",
+    "name": "晓多VOC洞察",
+    "description": "VOC是一款AI客服数据分析与店铺经营分析工具，通过消费者咨询、评价、售后数据智能分析，实现消费者体验分析，帮助商家定位询单流失、差评分析、退款原因，提升客服转化率与客户满意度，助力电商智能运营增长。",
+    "serviceType": 1,
+    "paradigm": "INDEPENDENCE",
+    "platforms": {
+      "pc": true,
+      "mobile": false
+    },
+    "chargeMode": 3,
+    "capabilities": [],
+    "detailUrl": "https://fw.jd.com/market/new/detail/FW_GOODS-1871009"
+  },
+  {
+    "serviceCode": "FW_GOODS-1956604",
+    "name": "河图AI图片检测",
+    "description": "免费送500点，图片和文本违规检测，卖点图，场景图等素材批量生成。",
+    "serviceType": 1,
+    "paradigm": "FLOW",
+    "platforms": {
+      "pc": true,
+      "mobile": false
+    },
+    "chargeMode": 3,
+    "capabilities": [],
+    "detailUrl": "https://fw.jd.com/market/new/detail/FW_GOODS-1956604"
+  },
+  {
+    "serviceCode": "FW_GOODS-1959801",
+    "name": "魔方AI质检",
+    "description": "AI实时识别会话风险、预警敏感话术，帮助提升服务规范与响应质量",
+    "serviceType": 1,
+    "paradigm": "INDEPENDENCE",
+    "platforms": {
+      "pc": true,
+      "mobile": false
+    },
+    "chargeMode": 3,
+    "capabilities": [
+      {
+        "code": "fw_tag_54821",
+        "name": "智能质检",
+        "description": "AI自动生成客服会话的质检内容",
+        "active": true,
+        "items": [
+          {
+            "code": "FW_GOODS-1959801-1",
+            "name": "AI客服质检",
+            "description": "",
+            "supported": true
+          }
+        ]
+      },
+      {
+        "code": "fw_tag_58213",
+        "name": "实时告警",
+        "description": "实时监测风险预警",
+        "active": true,
+        "items": [
+          {
+            "code": "FW_GOODS-1959801-1",
+            "name": "AI客服质检",
+            "description": "",
+            "supported": true
+          }
+        ]
+      },
+      {
+        "code": "fw_tag_58215",
+        "name": "实时质检",
+        "description": "AI实时质检在线客服会话",
+        "active": true,
+        "items": [
+          {
+            "code": "FW_GOODS-1959801-1",
+            "name": "AI客服质检",
+            "description": "",
+            "supported": true
+          }
+        ]
+      },
+      {
+        "code": "fw_tag_58214",
+        "name": "质检报告自动生成",
+        "description": "智能检测会话风险，客服质量一目",
+        "active": true,
+        "items": [
+          {
+            "code": "FW_GOODS-1959801-1",
+            "name": "AI客服质检",
+            "description": "",
+            "supported": true
+          }
+        ]
+      }
+    ],
+    "detailUrl": "https://fw.jd.com/market/new/detail/FW_GOODS-1959801"
+  },
+  {
+    "serviceCode": "FW_GOODS-1961214",
+    "name": "妙手商品检测",
+    "description": "利用AI技术实现商品智能检测与自动化优化，精准识别瑕疵并提升视觉表现，全方位赋能电商运营效率。",
+    "serviceType": 1,
+    "paradigm": "FLOW",
+    "platforms": {
+      "pc": true,
+      "mobile": false
+    },
+    "chargeMode": 3,
+    "capabilities": [],
+    "detailUrl": "https://fw.jd.com/market/new/detail/FW_GOODS-1961214"
+  },
+  {
+    "serviceCode": "FW_GOODS-1962202",
+    "name": "智能店长AI视频生成",
+    "description": "商品图片通过AI技术自动生成动态展示视频，帮忙快速获取高质量商品营销视频，大幅降低视频制作成本，提升内容生产效率与商品转化效果。",
+    "serviceType": 1,
+    "paradigm": "INDEPENDENCE",
+    "platforms": {
+      "pc": true,
+      "mobile": false
+    },
+    "chargeMode": 3,
+    "capabilities": [],
+    "detailUrl": "https://fw.jd.com/market/new/detail/FW_GOODS-1962202"
+  },
+  {
+    "serviceCode": "FW_GOODS-1964203",
+    "name": "稿定AI生图",
+    "description": "面向店铺素材制作的AI工具，通过对话生成商品素材，批量产出主图、白底图、场景图、卖点图等",
+    "serviceType": 1,
+    "paradigm": "FLOW",
+    "platforms": {
+      "pc": true,
+      "mobile": false
+    },
+    "chargeMode": 3,
+    "capabilities": [],
+    "detailUrl": "https://fw.jd.com/market/new/detail/FW_GOODS-1964203"
+  },
+  {
+    "serviceCode": "FW_GOODS-1964401",
+    "name": "麦爆了AI标题优化_违规检测",
+    "description": "「麦爆了AI标题优化」是一款专为电商卖家和内容创作者打造的效率工具，通过 AI 深度学习和全网搜索趋势数据，一键批量生成、诊断并替换高转化率标题，让您的商品和内容获得指数级曝光增长。",
+    "serviceType": 1,
+    "paradigm": "FLOW",
+    "platforms": {
+      "pc": true,
+      "mobile": false
+    },
+    "chargeMode": 3,
+    "capabilities": [
+      {
+        "code": "fw_tag_58417",
+        "name": "AI标题优化",
+        "description": "AI标题优化_违规检测",
+        "active": false,
+        "items": [
+          {
+            "code": "FW_GOODS-1964401-1",
+            "name": "正式版",
+            "description": "正式版",
+            "supported": false
+          }
+        ]
+      },
+      {
+        "code": "fw_tag_58426",
+        "name": "商品信息违规AI检测",
+        "description": "标题信息违规检测",
+        "active": true,
+        "items": [
+          {
+            "code": "FW_GOODS-1964401-1",
+            "name": "正式版",
+            "description": "正式版",
+            "supported": false
+          }
+        ]
+      }
+    ],
+    "detailUrl": "https://fw.jd.com/market/new/detail/FW_GOODS-1964401"
+  },
+  {
+    "serviceCode": "FW_GOODS-1964802",
+    "name": "AI会员诊断",
+    "description": "面向电商商家的 AI 会员运营诊断产品，能精准识别店铺会员运营核心问题并排序优先级，输出含人群运营、权益设计、活动落地等多类型解决方案，帮商家从 “看数字” 升级到“落地可执行的运营策略”。",
+    "serviceType": 1,
+    "paradigm": "FLOW",
+    "platforms": {
+      "pc": true,
+      "mobile": false
+    },
+    "chargeMode": 3,
+    "capabilities": [
+      {
+        "code": "fw_tag_5413",
+        "name": "数据分析",
+        "description": "对会员数据进行诊断分析",
+        "active": true,
+        "items": [
+          {
+            "code": "FW_GOODS-1964802-1",
+            "name": "基础版",
+            "description": "",
+            "supported": true
+          }
+        ]
+      },
+      {
+        "code": "fw_tag_5612",
+        "name": "会员分析",
+        "description": "对会员数据进行诊断分析",
+        "active": true,
+        "items": [
+          {
+            "code": "FW_GOODS-1964802-1",
+            "name": "基础版",
+            "description": "",
+            "supported": true
+          }
+        ]
+      }
+    ],
+    "detailUrl": "https://fw.jd.com/market/new/detail/FW_GOODS-1964802"
+  },
+  {
+    "serviceCode": "FW_GOODS-1968410",
+    "name": "快递助手爆款打单",
+    "description": "快递助手爆款打印，大促或直播爆单可批量高速处理订单，不卡顿漏单；支持同款订单集中打单、爆款订单优先发货，还能自动过滤退款/售后等异常单，大幅降低人工成本，提升打印发货效率。",
+    "serviceType": 1,
+    "paradigm": "FLOW",
+    "platforms": {
+      "pc": true,
+      "mobile": false
+    },
+    "chargeMode": 3,
+    "capabilities": [
+      {
+        "code": "fw_tag_31601",
+        "name": "电子面单",
+        "description": "支持市面上所有常用电子面单",
+        "active": true,
+        "items": [
+          {
+            "code": "FW_GOODS-1968410-4",
+            "name": "新客免费30天",
+            "description": "",
+            "supported": true
+          },
+          {
+            "code": "FW_GOODS-1968410-1",
+            "name": "标准版",
+            "description": "",
+            "supported": true
+          }
+        ]
+      },
+      {
+        "code": "fw_tag_5822",
+        "name": "批量打单",
+        "description": "支持一键批量打单",
+        "active": true,
+        "items": [
+          {
+            "code": "FW_GOODS-1968410-4",
+            "name": "新客免费30天",
+            "description": "",
+            "supported": true
+          },
+          {
+            "code": "FW_GOODS-1968410-1",
+            "name": "标准版",
+            "description": "",
+            "supported": true
+          }
+        ]
+      },
+      {
+        "code": "fw_tag_5623",
+        "name": "订单同步",
+        "description": "支持自动同步订单",
+        "active": true,
+        "items": [
+          {
+            "code": "FW_GOODS-1968410-4",
+            "name": "新客免费30天",
+            "description": "",
+            "supported": true
+          },
+          {
+            "code": "FW_GOODS-1968410-1",
+            "name": "标准版",
+            "description": "",
+            "supported": true
+          }
+        ]
+      },
+      {
+        "code": "fw_tag_5624",
+        "name": "批量发货",
+        "description": "支持一键批量发货",
+        "active": true,
+        "items": [
+          {
+            "code": "FW_GOODS-1968410-4",
+            "name": "新客免费30天",
+            "description": "",
+            "supported": true
+          },
+          {
+            "code": "FW_GOODS-1968410-1",
+            "name": "标准版",
+            "description": "",
+            "supported": true
+          }
+        ]
+      },
+      {
+        "code": "fw_tag_5626",
+        "name": "订单合并",
+        "description": "支持自动合并订单",
+        "active": true,
+        "items": [
+          {
+            "code": "FW_GOODS-1968410-4",
+            "name": "新客免费30天",
+            "description": "",
+            "supported": true
+          },
+          {
+            "code": "FW_GOODS-1968410-1",
+            "name": "标准版",
+            "description": "",
+            "supported": true
+          }
+        ]
+      }
+    ],
+    "detailUrl": "https://fw.jd.com/market/new/detail/FW_GOODS-1968410"
+  },
+  {
+    "serviceCode": "FW_GOODS-1969205",
+    "name": "超级店长AI改图王",
+    "description": "图片生成，首选超级店长_AI改图王",
+    "serviceType": 1,
+    "paradigm": "INDEPENDENCE",
+    "platforms": {
+      "pc": true,
+      "mobile": false
+    },
+    "chargeMode": 3,
+    "capabilities": [],
+    "detailUrl": "https://fw.jd.com/market/new/detail/FW_GOODS-1969205"
+  },
+  {
+    "serviceCode": "FW_GOODS-1970007",
+    "name": "京牛AI订单",
+    "description": "京牛AI分销采购_AI采购托管_自动选款/比价/下单/付款",
+    "serviceType": 1,
+    "paradigm": "INDEPENDENCE",
+    "platforms": {
+      "pc": true,
+      "mobile": false
+    },
+    "chargeMode": 3,
+    "capabilities": [],
+    "detailUrl": "https://fw.jd.com/market/new/detail/FW_GOODS-1970007"
+  },
+  {
+    "serviceCode": "FW_GOODS-1977404",
+    "name": "SicoAI生图侠",
+    "description": "支持AI生图，可生成主图、白底图、透图、场景图、卖点图等商品素材。迎新活动：新用户立赠500点(可生图50张)，现在充值还可享受充值加赠活动，单张生图仅需0.3元。添加客服还可享受更多优惠与服务。",
+    "serviceType": 1,
+    "paradigm": "INDEPENDENCE",
+    "platforms": {
+      "pc": true,
+      "mobile": false
+    },
+    "chargeMode": 3,
+    "capabilities": [
+      {
+        "code": "fw_tag_58415",
+        "name": "主图水印",
+        "description": "一键为商品主图添加品牌水印",
+        "active": true,
+        "items": [
+          {
+            "code": "FW_GOODS-1977404-1",
+            "name": "免费版",
+            "description": "商品主图添加品牌水印",
+            "supported": false
+          },
+          {
+            "code": "FW_GOODS-1977404-2",
+            "name": "标准版",
+            "description": "",
+            "supported": false
+          },
+          {
+            "code": "FW_GOODS-1977404-3",
+            "name": "尊享版-1个月",
+            "description": "",
+            "supported": false
+          },
+          {
+            "code": "FW_GOODS-1977404-4",
+            "name": "尊享版-1季度",
+            "description": "",
+            "supported": false
+          },
+          {
+            "code": "FW_GOODS-1977404-5",
+            "name": "尊享版-1年",
+            "description": "",
+            "supported": false
+          }
+        ]
+      },
+      {
+        "code": "fw_tag_58413",
+        "name": "智能消除",
+        "description": "一键智能消除图片中的多余物体",
+        "active": true,
+        "items": [
+          {
+            "code": "FW_GOODS-1977404-1",
+            "name": "免费版",
+            "description": "智能消除图片中的杂项",
+            "supported": false
+          },
+          {
+            "code": "FW_GOODS-1977404-2",
+            "name": "标准版",
+            "description": "",
+            "supported": false
+          },
+          {
+            "code": "FW_GOODS-1977404-3",
+            "name": "尊享版-1个月",
+            "description": "",
+            "supported": false
+          },
+          {
+            "code": "FW_GOODS-1977404-4",
+            "name": "尊享版-1季度",
+            "description": "",
+            "supported": false
+          },
+          {
+            "code": "FW_GOODS-1977404-5",
+            "name": "尊享版-1年",
+            "description": "",
+            "supported": false
+          }
+        ]
+      },
+      {
+        "code": "fw_tag_5807",
+        "name": "海报模板",
+        "description": "上传商品图片快速生成营销海报",
+        "active": true,
+        "items": [
+          {
+            "code": "FW_GOODS-1977404-1",
+            "name": "免费版",
+            "description": "商品图片快速生成营销",
+            "supported": false
+          },
+          {
+            "code": "FW_GOODS-1977404-2",
+            "name": "标准版",
+            "description": "",
+            "supported": false
+          },
+          {
+            "code": "FW_GOODS-1977404-3",
+            "name": "尊享版-1个月",
+            "description": "",
+            "supported": false
+          },
+          {
+            "code": "FW_GOODS-1977404-4",
+            "name": "尊享版-1季度",
+            "description": "",
+            "supported": false
+          },
+          {
+            "code": "FW_GOODS-1977404-5",
+            "name": "尊享版-1年",
+            "description": "",
+            "supported": false
+          }
+        ]
+      },
+      {
+        "code": "fw_tag_58416",
+        "name": "详情图水印",
+        "description": "一键为商品详情页添加品牌水印",
+        "active": true,
+        "items": [
+          {
+            "code": "FW_GOODS-1977404-1",
+            "name": "免费版",
+            "description": "商品详情添加品牌水印",
+            "supported": false
+          },
+          {
+            "code": "FW_GOODS-1977404-2",
+            "name": "标准版",
+            "description": "",
+            "supported": false
+          },
+          {
+            "code": "FW_GOODS-1977404-3",
+            "name": "尊享版-1个月",
+            "description": "",
+            "supported": false
+          },
+          {
+            "code": "FW_GOODS-1977404-4",
+            "name": "尊享版-1季度",
+            "description": "",
+            "supported": false
+          },
+          {
+            "code": "FW_GOODS-1977404-5",
+            "name": "尊享版-1年",
+            "description": "",
+            "supported": false
+          }
+        ]
+      }
+    ],
+    "detailUrl": "https://fw.jd.com/market/new/detail/FW_GOODS-1977404"
+  },
+  {
+    "serviceCode": "FW_GOODS-1991201",
+    "name": "智能店长AI商品优化",
+    "description": "AI商品优化定位于京东京麦平台的全链路AI商品内容智能优化引擎",
+    "serviceType": 1,
+    "paradigm": "INDEPENDENCE",
+    "platforms": {
+      "pc": true,
+      "mobile": false
+    },
+    "chargeMode": 3,
+    "capabilities": [],
+    "detailUrl": "https://fw.jd.com/market/new/detail/FW_GOODS-1991201"
+  },
+  {
+    "serviceCode": "FW_GOODS-33215",
+    "name": "快递助手_批量打单发货电子面单_拼购",
+    "description": "【支持京东无界电子面单】多店铺单号共享分享、多店订单一键批打、批量打印发货、订单合并、智能拆单、多单号、异常件提醒、留言备注退款提醒、发货单、备货单、对账单、自由打印、导入发货、快递派送提示、拼购等",
+    "serviceType": 1,
+    "paradigm": "INDEPENDENCE",
+    "platforms": {
+      "pc": true,
+      "mobile": true
+    },
+    "chargeMode": 3,
+    "capabilities": [
+      {
+        "code": "fw_tag_5822",
+        "name": "批量打单",
+        "description": "支持选择300单/页批量打印",
+        "active": true,
+        "items": [
+          {
+            "code": "FW_GOODS-33215-3",
+            "name": "免费试用",
+            "description": "",
+            "supported": true
+          },
+          {
+            "code": "FW_GOODS-33215-4",
+            "name": "打单标准版",
+            "description": "",
+            "supported": true
+          },
+          {
+            "code": "FW_GOODS-33215-5",
+            "name": "提效尊享版本",
+            "description": "",
+            "supported": true
+          }
+        ]
+      },
+      {
+        "code": "fw_tag_5624",
+        "name": "批量发货",
+        "description": "支持选择300单/页批量打印",
+        "active": true,
+        "items": [
+          {
+            "code": "FW_GOODS-33215-3",
+            "name": "免费试用",
+            "description": "",
+            "supported": true
+          },
+          {
+            "code": "FW_GOODS-33215-4",
+            "name": "打单标准版",
+            "description": "",
+            "supported": true
+          },
+          {
+            "code": "FW_GOODS-33215-5",
+            "name": "提效尊享版本",
+            "description": "",
+            "supported": true
+          }
+        ]
+      },
+      {
+        "code": "fw_tag_31601",
+        "name": "电子面单",
+        "description": "支持快递助手支持的所有电子面单",
+        "active": true,
+        "items": [
+          {
+            "code": "FW_GOODS-33215-3",
+            "name": "免费试用",
+            "description": "",
+            "supported": true
+          },
+          {
+            "code": "FW_GOODS-33215-4",
+            "name": "打单标准版",
+            "description": "",
+            "supported": true
+          },
+          {
+            "code": "FW_GOODS-33215-5",
+            "name": "提效尊享版本",
+            "description": "",
+            "supported": true
+          }
+        ]
+      },
+      {
+        "code": "fw_tag_5626",
+        "name": "订单合并",
+        "description": "支持同一收件人的多个订单合并",
+        "active": true,
+        "items": [
+          {
+            "code": "FW_GOODS-33215-3",
+            "name": "免费试用",
+            "description": "",
+            "supported": true
+          },
+          {
+            "code": "FW_GOODS-33215-4",
+            "name": "打单标准版",
+            "description": "",
+            "supported": true
+          },
+          {
+            "code": "FW_GOODS-33215-5",
+            "name": "提效尊享版本",
+            "description": "",
+            "supported": true
+          }
+        ]
+      },
+      {
+        "code": "fw_tag_5623",
+        "name": "订单同步",
+        "description": "多种混合查询条件同步订单",
+        "active": true,
+        "items": [
+          {
+            "code": "FW_GOODS-33215-3",
+            "name": "免费试用",
+            "description": "",
+            "supported": true
+          },
+          {
+            "code": "FW_GOODS-33215-4",
+            "name": "打单标准版",
+            "description": "",
+            "supported": true
+          },
+          {
+            "code": "FW_GOODS-33215-5",
+            "name": "提效尊享版本",
+            "description": "",
+            "supported": true
+          }
+        ]
+      }
+    ],
+    "detailUrl": "https://fw.jd.com/market/new/detail/FW_GOODS-33215"
+  }
+]
