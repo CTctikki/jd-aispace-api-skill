@@ -14,5 +14,8 @@ export function loadConfig(environment = process.env) {
     python: environment.AISPACE_PYTHON || "python",
     catalogPath: environment.AISPACE_CATALOG_PATH || path.resolve("data", "service-catalog.json"),
     catalogTtlMs: Number(environment.AISPACE_CATALOG_TTL_MS || 15 * 60_000),
+    serviceResolveConcurrency: Number(environment.AISPACE_SERVICE_RESOLVE_CONCURRENCY || 1),
+    serviceResolveDelayMs: Number(environment.AISPACE_SERVICE_RESOLVE_DELAY_MS || 500),
+    serviceResolveRetryDelayMs: Number(environment.AISPACE_SERVICE_RESOLVE_RETRY_DELAY_MS || 1_000),
   };
 }

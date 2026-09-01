@@ -42,7 +42,7 @@ test("catalog uses required portal request", async () => {
     result.tools.find((entry) => entry.serviceCode === "FW_GOODS-1970807").adapterStatus,
     "confirmation_validation_required",
   );
-  assert.equal(result.summary.withServiceCode, 8);
+  assert.equal(result.summary.withServiceCode, 26);
 });
 
 test("catalog maps purchased expert services to callable agent metadata", async () => {
@@ -73,7 +73,7 @@ test("catalog maps purchased expert services to callable agent metadata", async 
     throw new Error(`Unexpected API: ${request.api}`);
   } };
   const result = await new ServiceCatalog({ client }).discover();
-  const tool = result.tools.find((entry) => entry.name === "ChatExcel数据分析");
+  const tool = result.tools.find((entry) => entry.serviceCode === "FW_TEST_EXPERT");
   assert.equal(tool.serviceCode, "FW_TEST_EXPERT");
   assert.equal(tool.executionMode, "aispace_conversation");
   assert.deepEqual(tool.agent, {
@@ -96,4 +96,38 @@ test("catalog returns fresh memory cache without new calls", async () => {
   const cached = await catalog.discover();
   assert.equal(cached.cache, "hit");
   assert.equal(client.calls.length, callCount);
+});
+
+test("catalog retries service resolution after marketplace rate limiting", async () => {
+  const attempts = new Map();
+  const client = { async call(request) {
+    if (request.api.endsWith("getToolList")) return { data: [] };
+    if (request.api.endsWith("getExpertList")) return { data: [] };
+    if (request.api.endsWith("queryPublishedAppList")) return { data: [] };
+    if (request.api.endsWith("listAiSpacePurchase")) return { data: [] };
+    if (request.api.endsWith("queryServiceByCode")) {
+      const serviceCode = request.payload.request.serviceCode;
+      const count = (attempts.get(serviceCode) || 0) + 1;
+      attempts.set(serviceCode, count);
+      if (serviceCode === "FW_GOODS-1991201" && count === 1) {
+        throw Object.assign(new Error("操作频繁，请稍后再试。"), {
+          code: "SFF_BUSINESS_ERROR",
+          details: { businessCode: "201" },
+        });
+      }
+      return { data: { serviceCode, aiSpaceToolParadigm: "INDEPENDENCE" } };
+    }
+    return { data: {} };
+  } };
+  const catalog = new ServiceCatalog({
+    client,
+    resolveConcurrency: 1,
+    resolveRetryDelayMs: 0,
+  });
+  const result = await catalog.discover();
+  assert.equal(attempts.get("FW_GOODS-1991201"), 2);
+  assert.equal(
+    result.tools.find((tool) => tool.serviceCode === "FW_GOODS-1991201").service.status,
+    "resolved",
+  );
 });

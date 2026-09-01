@@ -37,6 +37,54 @@ test("tool registry is exposed without contacting JD", async () => {
   });
 });
 
+test("marketplace search endpoint is read-only", async () => {
+  let received;
+  const gateway = new AiSpaceGateway({
+    client: {},
+    marketplaceSearchAdapter: {
+      async search(input) {
+        received = input;
+        return { query: input.query, total: 1, services: [] };
+      },
+    },
+  });
+  await withServer(async (baseUrl) => {
+    const response = await fetch(`${baseUrl}/v1/marketplace/search?query=AI%E4%BC%9A%E5%91%98%E8%AF%8A%E6%96%AD`, {
+      headers: { authorization: "Bearer test-token" },
+    });
+    assert.equal(response.status, 200);
+    assert.equal((await response.json()).total, 1);
+  }, gateway);
+  assert.deepEqual(received, {
+    query: "AI会员诊断",
+    classify: null,
+    page: null,
+    pageSize: null,
+  });
+});
+
+test("service access endpoint returns sanitized state", async () => {
+  const gateway = new AiSpaceGateway({
+    client: {},
+    serviceAccessAdapter: {
+      async inspect(serviceCode) {
+        return { serviceCode, active: false, actions: [] };
+      },
+    },
+  });
+  await withServer(async (baseUrl) => {
+    const response = await fetch(`${baseUrl}/v1/services/access?serviceCode=FW_GOODS-1961214`, {
+      headers: { authorization: "Bearer test-token" },
+    });
+    assert.equal(response.status, 200);
+    assert.deepEqual(await response.json(), {
+      serviceCode: "FW_GOODS-1961214",
+      active: false,
+      actions: [],
+    });
+  }, gateway);
+});
+
 test("typed workflow endpoint forwards input only with confirmation", async () => {
   let received;
   const gateway = new AiSpaceGateway({

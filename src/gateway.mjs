@@ -11,6 +11,8 @@ export class AiSpaceGateway {
     hostingAdapter = null,
     activitySignupAdapter = null,
     taskHistoryAdapter = null,
+    marketplaceSearchAdapter = null,
+    serviceAccessAdapter = null,
   }) {
     this.client = client;
     this.catalog = catalog;
@@ -19,6 +21,8 @@ export class AiSpaceGateway {
     this.hostingAdapter = hostingAdapter;
     this.activitySignupAdapter = activitySignupAdapter;
     this.taskHistoryAdapter = taskHistoryAdapter;
+    this.marketplaceSearchAdapter = marketplaceSearchAdapter;
+    this.serviceAccessAdapter = serviceAccessAdapter;
   }
 
   getRegistry() {
@@ -45,6 +49,16 @@ export class AiSpaceGateway {
   discoverServices(options) {
     if (this.catalog === null) throw new Error("service catalog is not configured");
     return this.catalog.discover(options);
+  }
+
+  searchMarketplace(input) {
+    if (this.marketplaceSearchAdapter === null) throw new Error("marketplace search adapter is not configured");
+    return this.marketplaceSearchAdapter.search(input);
+  }
+
+  inspectServiceAccess(serviceCode) {
+    if (this.serviceAccessAdapter === null) throw new Error("service access adapter is not configured");
+    return this.serviceAccessAdapter.inspect(serviceCode);
   }
 
   inspectWorkflow(serviceCode) {

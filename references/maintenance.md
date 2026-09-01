@@ -4,9 +4,13 @@ Use this process when AI 经营中心 adds a tool or changes an existing one.
 
 ## Detect Changes
 
-1. Start the local gateway with an authorized, stopped merchant profile.
-2. Run `npm run catalog:check`. Discovery checks official tools, official experts, purchased services, and published self-built Flow apps. Purchased `EXPERT` services are also mapped to their AI Space Agent metadata.
-3. Review added, removed, and changed entries. Catalog changes alone do not prove execution support.
+1. Run `npm run marketplace:check` without a login to verify exact public service-code matches. The script is deliberately rate-limited.
+2. Start the local gateway with an authorized, stopped merchant profile.
+3. Run `npm run catalog:check`. Discovery checks official tools, official experts, purchased services, and published self-built Flow apps. Purchased `EXPERT` services are also mapped to their AI Space Agent metadata.
+4. For a missing or renamed third-party tool, query `GET /v1/marketplace/search?query=<exact name>&classify=tools`. Accept only an exact normalized name match; similar names are not interchangeable.
+5. Review added, removed, and changed entries. Catalog changes alone do not prove execution support.
+
+The gateway resolves service metadata serially with a short delay by default because concurrent bulk resolution can return business code `201` / `20008` (rate limited) and create false `unresolved` entries. Override `AISPACE_SERVICE_RESOLVE_CONCURRENCY`, `AISPACE_SERVICE_RESOLVE_DELAY_MS`, or `AISPACE_SERVICE_RESOLVE_RETRY_DELAY_MS` only when the environment has been verified to tolerate it.
 
 ## Add Or Update An Adapter
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.0 - 2026-09-01
+
+- Resolve all 18 third-party baseline tools to exact public 京麦服务市场 service codes.
+- Add privacy-filtered, unauthenticated marketplace search for future tool discovery.
+- Classify the third-party set as seven Flow tools and eleven independent applications while keeping execution disabled until purchase/authorization and protocol validation.
+- Throttle live service metadata resolution and retry confirmed SFF rate-limit responses.
+- Add a sanitized read-only service availability endpoint that omits account-identifying permission messages.
+
 ## 0.3.1 - 2026-09-01
 
 - Add sanitized task history with workflow result-reference extraction.

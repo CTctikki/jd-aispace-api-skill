@@ -8,6 +8,8 @@ import { BusinessOpportunityAdapter } from "./adapters/business-opportunity.mjs"
 import { ActivitySignupAdapter } from "./adapters/activity-signup.mjs";
 import { HostingAdapter } from "./adapters/hosting.mjs";
 import { TaskHistoryAdapter } from "./adapters/tasks.mjs";
+import { MarketplaceSearchAdapter } from "./adapters/marketplace-search.mjs";
+import { ServiceAccessAdapter } from "./adapters/service-access.mjs";
 import { DirectHttpTransport } from "./transports/direct-http.mjs";
 import { HttpBridgeTransport } from "./transports/http-bridge.mjs";
 import { ChromeProfileTransport } from "./transports/chrome-profile.mjs";
@@ -23,18 +25,24 @@ const transport = config.bridgeUrl
       })
     : new DirectHttpTransport({ cookie: config.cookie, dsmEid: config.dsmEid });
 const client = new SffClient({ transport });
+const publicMarketplaceClient = new SffClient({ transport: new DirectHttpTransport() });
 const gateway = new AiSpaceGateway({
   client,
   catalog: new ServiceCatalog({
     client,
     cachePath: config.catalogPath,
     cacheTtlMs: config.catalogTtlMs,
+    resolveConcurrency: config.serviceResolveConcurrency,
+    resolveDelayMs: config.serviceResolveDelayMs,
+    resolveRetryDelayMs: config.serviceResolveRetryDelayMs,
   }),
   workflowAdapter: new WorkflowToolAdapter({ client, transport }),
   businessOpportunityAdapter: new BusinessOpportunityAdapter({ client, transport }),
   hostingAdapter: new HostingAdapter({ client }),
   activitySignupAdapter: new ActivitySignupAdapter({ client }),
   taskHistoryAdapter: new TaskHistoryAdapter({ client }),
+  marketplaceSearchAdapter: new MarketplaceSearchAdapter({ client: publicMarketplaceClient }),
+  serviceAccessAdapter: new ServiceAccessAdapter({ client }),
 });
 const server = createServer({ gateway, token: config.token });
 

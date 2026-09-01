@@ -10,6 +10,8 @@ Use the bundled local gateway instead of clicking through the merchant UI. Keep 
 ## Choose The Operation
 
 - List current tools with `GET /v1/services?refresh=true`.
+- Search public 京麦服务市场 metadata with `GET /v1/marketplace/search?query=<name>&classify=tools`; prefer exact-name matches.
+- Check whether the current account can use or request a service with `GET /v1/services/access?serviceCode=<code>`; the response omits account-specific tips.
 - Inspect an allowlisted workflow with `POST /v1/workflows/inspect`.
 - Run 商详信息 AI 全巡检 with `POST /v1/workflows/product-detail-inspection`.
 - Run 商详主图 AI 巡检 with `POST /v1/workflows/main-image-inspection`.
@@ -37,6 +39,7 @@ Use the bundled local gateway instead of clicking through the merchant UI. Keep 
 - Treat catalog, metadata, and result replay as read-only.
 - Never print, persist, commit, or return Cookies, auth codes, access contexts, tokens, account identifiers, or decrypted credentials.
 - Never invoke `zeroOrFreePurchaseOrder` automatically.
+- Treat public service codes as discovery metadata, not execution proof. Third-party Flow and independent applications still require an observed, authorized launch/input protocol.
 - If the profile is locked, ask for a stopped or dedicated profile instead of taking over the visible browser.
 - If a tool lacks a verified adapter, report metadata only. Do not guess hidden fields or claim it is executable.
 - Do not execute 主推商品 AI 打标、托管启停或活动报名 until the user explicitly authorizes the specific write and its live protocol has been validated.
@@ -47,4 +50,4 @@ If execution returns `timedOut=true`, retain `threadId` and `runId`, then call `
 
 ## Maintain For AISpace Changes
 
-Run `npm run catalog:check` after AISpace changes. Read `references/maintenance.md` before changing adapters. Update only after behavior is observed with an authorized account, the protocol change is confirmed, and regression tests pass.
+Run `npm run marketplace:check` and `npm run catalog:check` after AISpace changes. Read `references/maintenance.md` before changing adapters. Update only after behavior is observed with an authorized account, the protocol change is confirmed, and regression tests pass.

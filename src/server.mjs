@@ -67,6 +67,19 @@ export function createServer({ gateway, token = "" }) {
         });
         return sendJson(response, 200, result);
       }
+      if (request.method === "GET" && url.pathname === "/v1/marketplace/search") {
+        const result = await gateway.searchMarketplace({
+          query: url.searchParams.get("query"),
+          classify: url.searchParams.get("classify"),
+          page: url.searchParams.get("page"),
+          pageSize: url.searchParams.get("pageSize"),
+        });
+        return sendJson(response, 200, result);
+      }
+      if (request.method === "GET" && url.pathname === "/v1/services/access") {
+        const result = await gateway.inspectServiceAccess(url.searchParams.get("serviceCode"));
+        return sendJson(response, 200, result);
+      }
       if (request.method === "GET" && url.pathname === "/v1/tasks") {
         const result = await gateway.listTasks({
           currentPage: url.searchParams.get("currentPage"),

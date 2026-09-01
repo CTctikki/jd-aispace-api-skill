@@ -10,7 +10,9 @@
 | --- | --- |
 | 动态发现官方工具、官方专家、已购服务和自建 Flow | 已支持 |
 | 历史任务查询及工作流结果引用恢复 | 已支持（只读） |
-| 已识别 6 类、26 个工具的基础目录 | 已支持 |
+| 已识别 6 类、26 个工具及真实服务代码 | 已支持 |
+| 京麦服务市场工具搜索与精确匹配 | 已支持（公开只读接口） |
+| 服务订购/使用权限状态查询 | 已支持（登录后只读、身份脱敏） |
 | 4 个官方商品工作流元数据与 AG-UI 流协议 | 已支持 |
 | 商详信息 AI 全巡检自动启动、提交、结果重放 | 已支持 |
 | 商详主图 AI 巡检自动执行与报告解析 | 已支持 |
@@ -21,7 +23,8 @@
 | 批量报名预约活动模板、参数查询与本地 XLSX 预检 | 已支持（只读） |
 | 主推商品 AI 打标 | 参数协议已适配，待商家授权真实写操作验证 |
 | 托管启停、活动报名提交 | 待商家明确授权及真实数据验证 |
-| 其余 18 个第三方工具 | 当前账号未返回服务代码或启动入口，暂不可直接调用 |
+| 7 个第三方 Flow 工具 | 服务代码与类型已识别；需先订购/授权并验证各自输入协议 |
+| 11 个第三方独立应用 | 服务代码与类型已识别；需先订购/授权并适配服务商接口 |
 | 未验证工具的自动执行 | 不支持，避免猜测参数 |
 
 ## 安装为 Codex Skill
@@ -78,12 +81,14 @@ Invoke-RestMethod http://127.0.0.1:17321/v1/workflows/product-detail-inspection 
 - `POST /v1/business-opportunity/ask`
 - `POST /v1/workflows/result`（只读结果回放）
 - `GET /v1/tasks`（只读任务历史，可恢复工作流 `threadId/runId`）
+- `GET /v1/marketplace/search?query=工具名`（公开服务市场精确检索，不使用店铺 Cookie）
+- `GET /v1/services/access?serviceCode=FW_GOODS-...`（只返回脱敏后的可用状态和操作类型）
 
 托管配置可通过 `GET /v1/hosting/:type` 查询；活动模板和文件预检使用 `GET /v1/activity-signup/schema` 与 `POST /v1/activity-signup/validate`。完整接口见 [`references/api.md`](references/api.md)。
 
 ## 跟踪 AISpace 更新
 
-运行 `npm run catalog:check` 检查工具目录变化。确认协议并通过测试后，运行 `npm run catalog:update` 更新公开基线。详细流程见 [`references/maintenance.md`](references/maintenance.md)。
+运行 `npm run marketplace:check` 校验 18 个第三方工具的公开服务代码，再运行 `npm run catalog:check` 检查登录后目录变化。确认协议并通过测试后，运行 `npm run catalog:update` 更新公开基线。详细流程见 [`references/maintenance.md`](references/maintenance.md)。
 
 ## 安全设计
 

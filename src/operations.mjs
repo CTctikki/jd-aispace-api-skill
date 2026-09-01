@@ -1,6 +1,7 @@
 export const APP_IDS = Object.freeze({
   portal: "YLUC0MIUG39LNW6RQZBN",
   market: "RHF4TRSNMOTM9W9O3UKH",
+  marketplace: "ZX4CQB3H0F5HAQ5RCM0G",
   workflow: "FYIFKQ8BWEEXWLBKKTRO",
   businessOpportunity: "ANND8ARAD7MBSWZRBUKF",
   hosting: "YYGSNPYN2EN5LVUEWU4Y",
@@ -36,6 +37,16 @@ export const OPERATIONS = Object.freeze({
   "service.resolve": {
     appId: APP_IDS.market,
     api: "dsm.fuwu.microApp.MicroAppServiceDsmProvider.queryServiceByCode",
+    effect: "read",
+  },
+  "marketplace.search": {
+    appId: APP_IDS.marketplace,
+    api: "dsm.fuwu.search.SearchUpgradeDsmProvider.queryServiceList",
+    effect: "read",
+  },
+  "service.access": {
+    appId: APP_IDS.marketplace,
+    api: "dsm.jmmarket.remoting.dsm.service.GoodsDsmProvider.queryServiceOpt",
     effect: "read",
   },
   "service.use": {

@@ -76,13 +76,43 @@ async function mapWithConcurrency(items, concurrency, mapper) {
 }
 
 export class ServiceCatalog {
-  constructor({ client, cachePath = "", cacheTtlMs = 15 * 60_000, now = () => Date.now() }) {
+  constructor({
+    client,
+    cachePath = "",
+    cacheTtlMs = 15 * 60_000,
+    now = () => Date.now(),
+    resolveConcurrency = 4,
+    resolveDelayMs = 0,
+    resolveRetryDelayMs = 1_000,
+    sleep = (duration) => new Promise((resolve) => setTimeout(resolve, duration)),
+  }) {
     if (!client) throw new Error("client is required");
     this.client = client;
     this.cachePath = cachePath;
     this.cacheTtlMs = cacheTtlMs;
     this.now = now;
+    this.resolveConcurrency = Math.max(1, Number(resolveConcurrency) || 1);
+    this.resolveDelayMs = Math.max(0, Number(resolveDelayMs) || 0);
+    this.resolveRetryDelayMs = Math.max(0, Number(resolveRetryDelayMs) || 0);
+    this.sleep = sleep;
     this.memoryCache = null;
+  }
+
+  async resolveServiceMetadata(serviceCode) {
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      try {
+        const result = await this.call("service.resolve", { request: { serviceCode } });
+        return [serviceCode, { status: "resolved", ...summarizeResolvedService(result.data) }];
+      } catch (error) {
+        const rateLimited = String(error?.details?.businessCode || "") === "201"
+          || String(error?.details?.bCode || "") === "20008";
+        if (!rateLimited || attempt === 2) {
+          return [serviceCode, { status: "unresolved", errorCode: error.code || "UNKNOWN_ERROR" }];
+        }
+        await this.sleep(this.resolveRetryDelayMs * (2 ** attempt));
+      }
+    }
+    return [serviceCode, { status: "unresolved", errorCode: "UNKNOWN_ERROR" }];
   }
 
   async call(name, payload) {
@@ -141,13 +171,10 @@ export class ServiceCatalog {
       ...portalTools.map((tool) => tool.code),
       ...marketServices.map((service) => service.serviceCode),
     ].filter(Boolean))];
-    const resolvedResults = await mapWithConcurrency(serviceCodes, 4, async (serviceCode) => {
-      try {
-        const result = await this.call("service.resolve", { request: { serviceCode } });
-        return [serviceCode, { status: "resolved", ...summarizeResolvedService(result.data) }];
-      } catch (error) {
-        return [serviceCode, { status: "unresolved", errorCode: error.code || "UNKNOWN_ERROR" }];
-      }
+    const resolvedResults = await mapWithConcurrency(serviceCodes, this.resolveConcurrency, async (serviceCode) => {
+      const result = await this.resolveServiceMetadata(serviceCode);
+      if (this.resolveDelayMs > 0) await this.sleep(this.resolveDelayMs);
+      return result;
     });
     const resolvedByCode = new Map(resolvedResults);
     const expertServiceCodes = marketServices

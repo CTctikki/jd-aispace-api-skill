@@ -24,7 +24,29 @@ test("registry contains all 26 discovered tools", () => {
     total: 26,
     official: 8,
     thirdParty: 18,
-    serviceCodesKnown: 8,
+    serviceCodesKnown: 26,
+  });
+});
+
+test("gateway delegates public marketplace search", async () => {
+  const gateway = new AiSpaceGateway({
+    client: {},
+    marketplaceSearchAdapter: { search: async (input) => ({ ...input, total: 1 }) },
+  });
+  assert.deepEqual(await gateway.searchMarketplace({ query: "AI会员诊断" }), {
+    query: "AI会员诊断",
+    total: 1,
+  });
+});
+
+test("gateway delegates sanitized service access inspection", async () => {
+  const gateway = new AiSpaceGateway({
+    client: {},
+    serviceAccessAdapter: { inspect: async (serviceCode) => ({ serviceCode, active: false }) },
+  });
+  assert.deepEqual(await gateway.inspectServiceAccess("FW_GOODS-1961214"), {
+    serviceCode: "FW_GOODS-1961214",
+    active: false,
   });
 });
 
