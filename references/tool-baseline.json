@@ -1,0 +1,236 @@
+[
+  {
+    "name": "妙手商品检测",
+    "category": "店铺运营",
+    "publisher": "third_party",
+    "serviceCode": null,
+    "paradigm": null,
+    "executionMode": "unknown",
+    "adapterStatus": "service_code_missing"
+  },
+  {
+    "name": "智能店长AI商品优化",
+    "category": "店铺运营",
+    "publisher": "third_party",
+    "serviceCode": null,
+    "paradigm": null,
+    "executionMode": "unknown",
+    "adapterStatus": "service_code_missing"
+  },
+  {
+    "name": "ChatExcel数据分析",
+    "category": "店铺运营",
+    "publisher": "third_party",
+    "serviceCode": null,
+    "paradigm": null,
+    "executionMode": "unknown",
+    "adapterStatus": "service_code_missing"
+  },
+  {
+    "name": "快递助手_批量打单发货电子面单_拼购",
+    "category": "订单履约",
+    "publisher": "third_party",
+    "serviceCode": null,
+    "paradigm": null,
+    "executionMode": "unknown",
+    "adapterStatus": "service_code_missing"
+  },
+  {
+    "name": "快递助手爆款打单",
+    "category": "订单履约",
+    "publisher": "third_party",
+    "serviceCode": null,
+    "paradigm": null,
+    "executionMode": "unknown",
+    "adapterStatus": "service_code_missing"
+  },
+  {
+    "name": "宜算发票自动开票",
+    "category": "订单履约",
+    "publisher": "third_party",
+    "serviceCode": null,
+    "paradigm": null,
+    "executionMode": "unknown",
+    "adapterStatus": "service_code_missing"
+  },
+  {
+    "name": "魔方AI质检",
+    "category": "客户服务",
+    "publisher": "third_party",
+    "serviceCode": null,
+    "paradigm": null,
+    "executionMode": "unknown",
+    "adapterStatus": "service_code_missing"
+  },
+  {
+    "name": "晓多AI训练场",
+    "category": "客户服务",
+    "publisher": "third_party",
+    "serviceCode": null,
+    "paradigm": null,
+    "executionMode": "unknown",
+    "adapterStatus": "service_code_missing"
+  },
+  {
+    "name": "晓多VOC洞察",
+    "category": "客户服务",
+    "publisher": "third_party",
+    "serviceCode": null,
+    "paradigm": null,
+    "executionMode": "unknown",
+    "adapterStatus": "service_code_missing"
+  },
+  {
+    "name": "一呼客服质检",
+    "category": "客户服务",
+    "publisher": "third_party",
+    "serviceCode": null,
+    "paradigm": null,
+    "executionMode": "unknown",
+    "adapterStatus": "service_code_missing"
+  },
+  {
+    "name": "京牛AI订单",
+    "category": "商机选品",
+    "publisher": "third_party",
+    "serviceCode": null,
+    "paradigm": null,
+    "executionMode": "unknown",
+    "adapterStatus": "service_code_missing"
+  },
+  {
+    "name": "超级店长AI改图王",
+    "category": "商品素材",
+    "publisher": "third_party",
+    "serviceCode": null,
+    "paradigm": null,
+    "executionMode": "unknown",
+    "adapterStatus": "service_code_missing"
+  },
+  {
+    "name": "稿定AI生图",
+    "category": "商品素材",
+    "publisher": "third_party",
+    "serviceCode": null,
+    "paradigm": null,
+    "executionMode": "unknown",
+    "adapterStatus": "service_code_missing"
+  },
+  {
+    "name": "河图AI图片检测",
+    "category": "商品素材",
+    "publisher": "third_party",
+    "serviceCode": null,
+    "paradigm": null,
+    "executionMode": "unknown",
+    "adapterStatus": "service_code_missing"
+  },
+  {
+    "name": "麦爆了AI标题优化_违规检测",
+    "category": "商品素材",
+    "publisher": "third_party",
+    "serviceCode": null,
+    "paradigm": null,
+    "executionMode": "unknown",
+    "adapterStatus": "service_code_missing"
+  },
+  {
+    "name": "智能店长AI视频生成",
+    "category": "商品素材",
+    "publisher": "third_party",
+    "serviceCode": null,
+    "paradigm": null,
+    "executionMode": "unknown",
+    "adapterStatus": "service_code_missing"
+  },
+  {
+    "name": "SicoAI生图侠",
+    "category": "商品素材",
+    "publisher": "third_party",
+    "serviceCode": null,
+    "paradigm": null,
+    "executionMode": "unknown",
+    "adapterStatus": "service_code_missing"
+  },
+  {
+    "name": "AI会员诊断",
+    "category": "营销推广",
+    "publisher": "third_party",
+    "serviceCode": null,
+    "paradigm": null,
+    "executionMode": "unknown",
+    "adapterStatus": "service_code_missing"
+  },
+  {
+    "name": "AI评价回复托管",
+    "category": "商品素材",
+    "publisher": "official",
+    "serviceCode": "FW_GOODS-1967204",
+    "paradigm": "INDEPENDENCE",
+    "executionMode": "independent_application",
+    "adapterStatus": "metadata_resolved"
+  },
+  {
+    "name": "AI商机情报",
+    "category": "商机选品",
+    "publisher": "official",
+    "serviceCode": "FW_GOODS-1968001",
+    "paradigm": "INDEPENDENCE",
+    "executionMode": "independent_application",
+    "adapterStatus": "metadata_resolved"
+  },
+  {
+    "name": "AI商品信息托管",
+    "category": "商品素材",
+    "publisher": "official",
+    "serviceCode": "FW_GOODS-1968201",
+    "paradigm": "INDEPENDENCE",
+    "executionMode": "independent_application",
+    "adapterStatus": "metadata_resolved"
+  },
+  {
+    "name": "批量报名预约活动",
+    "category": "营销推广",
+    "publisher": "official",
+    "serviceCode": "FW_GOODS-1968204",
+    "paradigm": "FLOW",
+    "executionMode": "tool_backend",
+    "adapterStatus": "metadata_resolved"
+  },
+  {
+    "name": "商详信息AI全巡检",
+    "category": "店铺运营",
+    "publisher": "official",
+    "serviceCode": "FW_GOODS-1968206",
+    "paradigm": "FLOW",
+    "executionMode": "workflow_stream",
+    "adapterStatus": "workflow_inspection_ready"
+  },
+  {
+    "name": "商详主图AI巡检",
+    "category": "店铺运营",
+    "publisher": "official",
+    "serviceCode": "FW_GOODS-1969405",
+    "paradigm": "FLOW",
+    "executionMode": "workflow_stream",
+    "adapterStatus": "workflow_inspection_ready"
+  },
+  {
+    "name": "商品主图批量下载",
+    "category": "商品素材",
+    "publisher": "official",
+    "serviceCode": "FW_GOODS-1970202",
+    "paradigm": "FLOW",
+    "executionMode": "workflow_stream",
+    "adapterStatus": "workflow_inspection_ready"
+  },
+  {
+    "name": "主推商品AI打标",
+    "category": "商品素材",
+    "publisher": "official",
+    "serviceCode": "FW_GOODS-1970807",
+    "paradigm": "FLOW",
+    "executionMode": "workflow_stream",
+    "adapterStatus": "workflow_inspection_ready"
+  }
+]

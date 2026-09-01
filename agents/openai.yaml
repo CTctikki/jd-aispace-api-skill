@@ -1,0 +1,4 @@
+interface:
+  display_name: "京麦 AI 经营中心 API"
+  short_description: "无界面调用并持续维护京麦 AI 经营中心工具网关能力"
+  default_prompt: "使用 $jd-aispace-api-skill 调用京麦 AI 经营中心工具，并安全返回结构化结果。"

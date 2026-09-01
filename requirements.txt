@@ -1,0 +1,2 @@
+cryptography>=43
+pywin32>=308; sys_platform == "win32"
