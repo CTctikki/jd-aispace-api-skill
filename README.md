@@ -80,6 +80,7 @@ Invoke-RestMethod http://127.0.0.1:17321/v1/workflows/product-detail-inspection 
 
 ```powershell
 npm test
+$env:PYTHONUTF8 = "1"
 python "$env:USERPROFILE\.codex\skills\.system\skill-creator\scripts\quick_validate.py" .
 ```
 
