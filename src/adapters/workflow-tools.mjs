@@ -8,6 +8,7 @@ import {
 import {
   buildImageDownloadFeedback,
   buildMainImageInspectionFeedback,
+  buildMainRecommendationLabelFeedback,
   IMAGE_DOWNLOAD_SERVICE,
   MAIN_IMAGE_INSPECTION_SERVICE,
   MAIN_RECOMMENDATION_LABEL_SERVICE,
@@ -355,6 +356,23 @@ export class WorkflowToolAdapter {
       squareImageIndexes: feedback.imageIndex.squareIndexList,
       rectangleImageIndexes: feedback.imageIndex.rectangleIndexList,
     });
+  }
+
+  planMainRecommendationLabel(input = {}) {
+    const feedback = buildMainRecommendationLabelFeedback(input);
+    const definition = this.getDefinition(MAIN_RECOMMENDATION_LABEL_SERVICE);
+    return {
+      serviceCode: MAIN_RECOMMENDATION_LABEL_SERVICE,
+      bizCode: definition.bizCode,
+      inputCardId: definition.inputCardId,
+      status: "live_write_validation_required",
+      executionEnabled: false,
+      input: { skuCount: feedback.inputValue.split("\n").length },
+      protocol: {
+        transport: "ag-ui-sse",
+        feedbackFields: Object.keys(feedback),
+      },
+    };
   }
 
 }

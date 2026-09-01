@@ -3,6 +3,7 @@ import test from "node:test";
 import {
   ActivitySignupAdapter,
   ACTIVITY_SIGNUP_APP_ID,
+  buildActivitySignupPlan,
   validateActivitySignupSheets,
 } from "../src/adapters/activity-signup.mjs";
 import { HostingAdapter } from "../src/adapters/hosting.mjs";
@@ -28,6 +29,34 @@ test("hosting inspection returns only actionable safe configuration", async () =
 test("hosting rejects unknown types", async () => {
   const adapter = new HostingAdapter({ client: {} });
   await assert.rejects(() => adapter.inspect("unknown"), { code: "INVALID_HOSTING_TYPE" });
+});
+
+test("hosting mutation planning uses live options without calling a write API", async () => {
+  const calls = [];
+  const client = { async call(request) {
+    calls.push(request.api);
+    return { data: {
+      manageTemplateResult: {
+        manageMaterialTypeResults: [
+          { materialType: 1, name: "白底图", type: 31 },
+          { materialType: 2, name: "短标题", type: 1001 },
+        ],
+        manageTemplateRuleResults: [{ code: "isSale", name: "动销商品" }],
+      },
+    } };
+  } };
+  const result = await new HostingAdapter({ client }).plan("material", {
+    action: "start",
+    scopeRule: "isSale",
+    materialTypes: [31, 1001],
+  });
+  assert.equal(result.executionEnabled, false);
+  assert.equal(result.status, "live_write_validation_required");
+  assert.deepEqual(result.input, {
+    scopeRule: "isSale",
+    materialTypes: [31, 1001],
+  });
+  assert.deepEqual(calls, ["dsm.ware.manage.job.queryManagePageInfo"]);
 });
 
 test("comment hosting inspection returns verified status, agreement, and styles", async () => {
@@ -68,6 +97,45 @@ test("comment hosting inspection returns verified status, agreement, and styles"
   assert.equal(calls.length, 5);
 });
 
+test("comment hosting planning validates live reply options without writes", async () => {
+  const calls = [];
+  const client = { async call(request) {
+    calls.push(request.api);
+    switch (request.api) {
+      case "dsm.ware.manage.job.queryManagePageInfo":
+        return { data: { manageTemplateResult: {}, manageCommentTemplateResults: [] } };
+      case "dsm.support.hosting.CommentsHostingFacadeService.getHostStatus":
+        return { data: { taskStatus: 0 } };
+      case "dsm.support.hosting.CommentsHostingFacadeService.hostProtocolEnabled":
+        return { data: 1 };
+      case "dsm.support.hosting.CommentsHostingFacadeService.getHostProtocol":
+        return { data: { id: 1, url: "https://storage.jd.com/protocol.pdf" } };
+      case "dsm.support.hosting.CommentsHostingFacadeService.replyStyleDefaultList":
+        return { data: {
+          replyTuneList: [{ id: 1, name: "智能", isDefaultShow: "1" }],
+          textLengthList: [{ id: 2, name: "丰富", isDefaultShow: "1" }],
+        } };
+      default:
+        throw new Error("unexpected write operation");
+    }
+  } };
+  const plan = await new HostingAdapter({ client }).plan("comment-reply", {
+    action: "start",
+    selectionMode: "all",
+    replyTuneId: 1,
+    textLengthId: 2,
+    acceptAgreement: true,
+  });
+  assert.deepEqual(plan.input, {
+    selectionMode: "all",
+    replyTuneId: 1,
+    textLengthId: 2,
+    acceptAgreement: true,
+  });
+  assert.equal(plan.protocol.operation, "openCommentHosting");
+  assert.equal(calls.length, 5);
+});
+
 test("activity signup schema parses the fixed official app", async () => {
   const client = { async call(request) {
     assert.equal(request.payload.request.appId, ACTIVITY_SIGNUP_APP_ID);
@@ -83,6 +151,26 @@ test("activity signup schema parses the fixed official app", async () => {
   assert.equal(result.version, "11");
   assert.equal(result.fields[0].name, "inputExcel");
   assert.equal(JSON.stringify(result).includes("hidden"), false);
+});
+
+test("activity signup planning exposes phases without file contents or path", () => {
+  const plan = buildActivitySignupPlan({
+    appId: ACTIVITY_SIGNUP_APP_ID,
+    appName: "批量预约活动报名",
+    version: "11",
+    fields: [{ name: "inputExcel", required: true, editor: { kind: "UploadFile", accept: ".xlsx" } }],
+  }, {
+    valid: true,
+    fileName: "activity.xlsx",
+    sizeBytes: 1024,
+    totalRows: 3,
+    sheets: [{ name: "POP商家", rowCount: 3, missingHeaders: [] }],
+    errors: [],
+  });
+  assert.equal(plan.executionEnabled, false);
+  assert.equal(plan.uploadField.name, "inputExcel");
+  assert.deepEqual(plan.phases, ["upload", "register_file", "check_duplicate", "create_task"]);
+  assert.equal(JSON.stringify(plan).includes("filePath"), false);
 });
 
 test("activity signup preflight validates both official worksheet formats without returning product ids", () => {

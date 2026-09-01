@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "protocols": [
+    {
+      "id": "hosting",
+      "pageUrl": "https://ware-embedhub.jd.com/host/materialHost?hideClose=1",
+      "bundlePattern": "/ware-embedhub/.+/js/app\\.[a-f0-9]+\\.js$",
+      "bundleUrl": "https://storage.360buyimg.com/shop-pageframe/micro-app/ware-embedhub/prod/1.0.21-master.ec10916/js/app.4f755e8a.js",
+      "sha256": "5fc86758dbeaa64087619d13168d31571632c83941ab5b91ceef9e6d2ac390bb",
+      "requiredMarkers": [
+        "dsm.ware.manage.job.openManageJob",
+        "dsm.ware.manage.job.updateManageJob",
+        "dsm.ware.manage.job.clsoeManageJob",
+        "dsm.support.hosting.CommentsHostingFacadeService.openCommentHosting",
+        "dsm.support.hosting.CommentsHostingFacadeService.operateHost",
+        "dsm.support.hosting.CommentsHostingFacadeService.updateReplyStyleData",
+        "dsm.support.hosting.CommentsHostingFacadeService.reStartHostingTask"
+      ]
+    },
+    {
+      "id": "activity-signup",
+      "pageUrl": "https://flow-executor.jd.com/create?appId=45c6f476-56fe-4b87-88bd-21d071f66a31",
+      "bundlePattern": "/js/app\\.[a-f0-9]+\\.js$",
+      "bundleUrl": "https://flow-executor.jd.com/js/app.9b9af3ba.js",
+      "sha256": "9da62197531213fffd7b144760934bb6eb7fe3d8a2ce6c4c37a113017a7ff18e",
+      "requiredMarkers": [
+        "dsm.oxygenflow.purchase.task.queryappDetail",
+        "dsm.oxygenflow.purchase.task.checkParamRepeat",
+        "dsm.oxygenflow.purchase.task.createTask",
+        "dsm.oxygenflow.purchase.task.updateTask",
+        "dsm.oxygenflow.designer.AppManagement.registerFile"
+      ]
+    },
+    {
+      "id": "main-recommendation-label",
+      "pageUrl": "https://ware-agent-pro.pf.jd.com/chat/main-recommendation-label",
+      "bundlePattern": "/ware-agent/prod/.+/assets/index-[a-f0-9]+\\.js$",
+      "bundleUrl": "https://storage.360buyimg.com/pubfree-bucket/ware-agent/prod/11617d0/assets/index-06f2f5c4.js",
+      "sha256": "47e118a027e38a7115df743e3272a2ae5a16114900efbe46d900947eaf18ad5f",
+      "requiredMarkers": [
+        "main-recommendation-label",
+        "CODE501",
+        "material_card"
+      ]
+    }
+  ]
+}

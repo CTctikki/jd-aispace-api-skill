@@ -5,6 +5,7 @@ import {
   buildMainImageInspectionFeedback,
   buildMainRecommendationLabelFeedback,
 } from "../src/adapters/product-workflows.mjs";
+import { WorkflowToolAdapter } from "../src/adapters/workflow-tools.mjs";
 
 test("main image inspection input becomes verified card feedback", () => {
   assert.deepEqual(buildMainImageInspectionFeedback({
@@ -65,5 +66,23 @@ test("main recommendation label input becomes verified card feedback", () => {
     description: { text: "123\n456", file: [] },
     inputValue: "123\n456",
     collcetSkuType: "4",
+  });
+});
+
+test("main recommendation label planning validates input without creating a task", () => {
+  const adapter = new WorkflowToolAdapter({
+    client: { async call() { throw new Error("must not call DSM"); } },
+  });
+  assert.deepEqual(adapter.planMainRecommendationLabel({ skuIds: ["123", "456"] }), {
+    serviceCode: "FW_GOODS-1970807",
+    bizCode: "CODE501",
+    inputCardId: "404",
+    status: "live_write_validation_required",
+    executionEnabled: false,
+    input: { skuCount: 2 },
+    protocol: {
+      transport: "ag-ui-sse",
+      feedbackFields: ["description", "inputValue", "collcetSkuType"],
+    },
   });
 });

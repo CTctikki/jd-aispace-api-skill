@@ -18,10 +18,13 @@ Use the bundled local gateway instead of clicking through the merchant UI. Keep 
 - Run 商详信息 AI 全巡检 with `POST /v1/workflows/product-detail-inspection`.
 - Run 商详主图 AI 巡检 with `POST /v1/workflows/main-image-inspection`.
 - Run 商品主图批量下载 with `POST /v1/workflows/image-download`.
+- Validate a 主推商品 AI 打标 request without running it with `POST /v1/workflows/main-recommendation-label/plan`.
 - Ask AI 商机情报 with `POST /v1/business-opportunity/ask`.
 - Inspect 商品信息/评价回复托管 with `GET /v1/hosting/material` or `GET /v1/hosting/comment-reply`.
+- Validate a hosting start/update/stop request without applying it with `POST /v1/hosting/<type>/plan`.
 - Inspect 批量报名预约活动 input requirements with `GET /v1/activity-signup/schema`.
 - Validate a completed activity workbook locally with `POST /v1/activity-signup/validate` before requesting authorization to upload it.
+- Build a sanitized, non-executable activity submission plan with `POST /v1/activity-signup/plan`.
 - Read an existing run with `POST /v1/workflows/result`.
 - Find prior tasks and reusable workflow references with `GET /v1/tasks`.
 - Use generic `POST /v1/workflows/run` only when its protocol is verified.
@@ -54,4 +57,4 @@ If execution returns `timedOut=true`, retain `threadId` and `runId`, then call `
 
 ## Maintain For AISpace Changes
 
-Run `npm run marketplace:check`, `npm run marketplace:details:check`, and `npm run catalog:check` after AISpace changes. Read `references/maintenance.md` before changing adapters. Update only after behavior is observed with an authorized account, the protocol change is confirmed, and regression tests pass.
+Run `npm run marketplace:check`, `npm run marketplace:details:check`, `npm run official-protocols:check`, and `npm run catalog:check` after AISpace changes. Read `references/maintenance.md` before changing adapters. A public bundle fingerprint can justify updating a read-only plan, but never enables a write adapter by itself; update execution only after behavior is observed with an authorized account, the protocol change is confirmed, and regression tests pass.

@@ -134,6 +134,10 @@ export function createServer({ gateway, token = "" }) {
         );
         return sendJson(response, 200, result);
       }
+      if (request.method === "POST" && url.pathname === "/v1/workflows/main-recommendation-label/plan") {
+        const body = await readJson(request);
+        return sendJson(response, 200, await gateway.planMainRecommendationLabel(body.input || {}));
+      }
       if (request.method === "POST" && url.pathname === "/v1/workflows/result") {
         const body = await readJson(request);
         const result = await gateway.readWorkflowRun(body.serviceCode, body.input || {});
@@ -162,12 +166,21 @@ export function createServer({ gateway, token = "" }) {
       if (request.method === "GET" && url.pathname === "/v1/hosting/comment-reply") {
         return sendJson(response, 200, await gateway.inspectHosting("comment-reply"));
       }
+      const hostingPlanMatch = url.pathname.match(/^\/v1\/hosting\/(material|comment-reply)\/plan$/);
+      if (request.method === "POST" && hostingPlanMatch) {
+        const body = await readJson(request);
+        return sendJson(response, 200, await gateway.planHosting(hostingPlanMatch[1], body.input || {}));
+      }
       if (request.method === "GET" && url.pathname === "/v1/activity-signup/schema") {
         return sendJson(response, 200, await gateway.inspectActivitySignup());
       }
       if (request.method === "POST" && url.pathname === "/v1/activity-signup/validate") {
         const body = await readJson(request);
         return sendJson(response, 200, await gateway.validateActivitySignupFile(body.input || {}));
+      }
+      if (request.method === "POST" && url.pathname === "/v1/activity-signup/plan") {
+        const body = await readJson(request);
+        return sendJson(response, 200, await gateway.planActivitySignup(body.input || {}));
       }
       return sendJson(response, 404, { error: { code: "NOT_FOUND" } });
     } catch (error) {

@@ -156,6 +156,33 @@ test("typed inspection requires confirmation while result replay is read-only", 
   );
 });
 
+test("write plans are read-only delegations", async () => {
+  const gateway = new AiSpaceGateway({
+    client: {},
+    workflowAdapter: {
+      planMainRecommendationLabel: (input) => ({ type: "label", input }),
+    },
+    hostingAdapter: {
+      plan: async (type, input) => ({ type, input }),
+    },
+    activitySignupAdapter: {
+      plan: async (input) => ({ type: "activity", input }),
+    },
+  });
+  assert.deepEqual(gateway.planMainRecommendationLabel({ skuIds: ["123"] }), {
+    type: "label",
+    input: { skuIds: ["123"] },
+  });
+  assert.deepEqual(await gateway.planHosting("material", { action: "start" }), {
+    type: "material",
+    input: { action: "start" },
+  });
+  assert.deepEqual(await gateway.planActivitySignup({ filePath: "activity.xlsx" }), {
+    type: "activity",
+    input: { filePath: "activity.xlsx" },
+  });
+});
+
 test("Chrome profile transport loads cookies once and never exposes them in results", async () => {
   let loads = 0;
   const seenCookies = [];

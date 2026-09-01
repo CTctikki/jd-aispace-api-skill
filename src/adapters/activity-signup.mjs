@@ -107,6 +107,46 @@ export function validateActivitySignupSheets(sheets) {
   return { valid: errors.length === 0, totalRows, sheets: results, errors };
 }
 
+export function buildActivitySignupPlan(schema, validation) {
+  if (validation.valid !== true) {
+    throw new GatewayError("Activity signup workbook must pass validation before planning", {
+      code: "INVALID_ACTIVITY_WORKBOOK",
+      status: 400,
+      details: { errors: validation.errors || [] },
+    });
+  }
+  const uploadFields = (schema.fields || []).filter((field) => field.editor?.kind === "UploadFile");
+  if (uploadFields.length !== 1) {
+    throw new GatewayError("Activity signup upload field is not uniquely defined", {
+      code: "ACTIVITY_SIGNUP_PROTOCOL_ERROR",
+      status: 502,
+    });
+  }
+  const uploadField = uploadFields[0];
+  return {
+    type: "activity-signup",
+    status: "live_write_validation_required",
+    executionEnabled: false,
+    app: {
+      appId: schema.appId,
+      appName: schema.appName,
+      version: schema.version,
+    },
+    file: {
+      fileName: validation.fileName,
+      sizeBytes: validation.sizeBytes,
+      totalRows: validation.totalRows,
+      sheets: validation.sheets,
+    },
+    uploadField: {
+      name: uploadField.name,
+      required: uploadField.required,
+      accept: uploadField.editor.accept,
+    },
+    phases: ["upload", "register_file", "check_duplicate", "create_task"],
+  };
+}
+
 export class ActivitySignupAdapter {
   constructor({ client }) {
     if (!client) throw new Error("client is required");
@@ -174,5 +214,13 @@ export class ActivitySignupAdapter {
         details: { reason: error.message },
       });
     }
+  }
+
+  async plan(input = {}) {
+    const [schema, validation] = await Promise.all([
+      this.inspect(),
+      this.validateFile(input),
+    ]);
+    return buildActivitySignupPlan(schema, validation);
   }
 }

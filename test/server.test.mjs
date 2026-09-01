@@ -296,6 +296,47 @@ test("hosting and activity schema endpoints are read-only", async () => {
   }, gateway);
 });
 
+test("disabled write-plan endpoints never require mutation confirmation", async () => {
+  const gateway = new AiSpaceGateway({
+    client: {},
+    workflowAdapter: {
+      planMainRecommendationLabel(input) { return { type: "label", input, executionEnabled: false }; },
+    },
+    hostingAdapter: {
+      async plan(type, input) { return { type, input, executionEnabled: false }; },
+    },
+    activitySignupAdapter: {
+      async plan(input) { return { type: "activity", input, executionEnabled: false }; },
+    },
+  });
+  await withServer(async (baseUrl) => {
+    const headers = { authorization: "Bearer test-token", "content-type": "application/json" };
+    const label = await fetch(baseUrl + "/v1/workflows/main-recommendation-label/plan", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ input: { skuIds: ["123"] } }),
+    });
+    assert.equal(label.status, 200);
+    assert.equal((await label.json()).executionEnabled, false);
+
+    const hosting = await fetch(baseUrl + "/v1/hosting/material/plan", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ input: { action: "start" } }),
+    });
+    assert.equal(hosting.status, 200);
+    assert.equal((await hosting.json()).type, "material");
+
+    const activity = await fetch(baseUrl + "/v1/activity-signup/plan", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ input: { filePath: "activity.xlsx" } }),
+    });
+    assert.equal(activity.status, 200);
+    assert.equal((await activity.json()).type, "activity");
+  }, gateway);
+});
+
 test("task history endpoint is read-only and forwards filters", async () => {
   let received;
   const gateway = new AiSpaceGateway({

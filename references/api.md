@@ -94,10 +94,14 @@ The ask response includes `answer`, `thinking`, `traceId`, `groupId`, `status`, 
 
 - `GET /v1/hosting/material` returns current 商品信息托管 status and allowed settings.
 - `GET /v1/hosting/comment-reply` returns current 评价回复托管 status, agreement metadata, reply tone options, and text-length options.
+- `POST /v1/hosting/material/plan` validates `input.action`, `input.scopeRule`, and `input.materialTypes` against live options and returns a non-executable mutation plan.
+- `POST /v1/hosting/comment-reply/plan` validates the requested action and reply settings against live options and returns a non-executable mutation plan.
 - `GET /v1/activity-signup/schema` returns the current 批量预约活动报名 version, accepted input fields, and official template URL.
 - `POST /v1/activity-signup/validate` accepts `{"input":{"filePath":"C:\\\\path\\\\activity.xlsx"}}` and validates the official POP商家/自营供应商 worksheets locally. It returns only row counts and error locations, never SKU/SPU values.
+- `POST /v1/activity-signup/plan` accepts the same local file input, validates it, resolves the current app schema, and returns the four confirmed phases: upload, register file, duplicate check, and task creation. It omits the local path and workbook contents.
+- `POST /v1/workflows/main-recommendation-label/plan` validates up to 1000 SKU IDs and returns the confirmed workflow/card metadata plus SKU count without creating a workflow run.
 
-These endpoints are read-only. Starting or changing continuous hosting, submitting activity registrations, and 主推商品 AI 打标 remain disabled until an authorized merchant explicitly approves a live write validation.
+All plan endpoints are read-only and return `executionEnabled=false` with `status=live_write_validation_required`. Starting or changing continuous hosting, submitting activity registrations, and 主推商品 AI 打标 remain disabled until an authorized merchant explicitly approves a live write validation.
 
 ## Result Replay
 

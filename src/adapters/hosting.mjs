@@ -9,6 +9,7 @@ const COMMENT_TASK_STATUSES = Object.freeze({
   3: "hosting",
   4: "stopped",
 });
+const HOSTING_ACTIONS = Object.freeze(["start", "update", "stop"]);
 
 function operationRequest(name, payload) {
   const operation = OPERATIONS[name];
@@ -42,6 +43,70 @@ function safeStyle(item = {}) {
     id: item.id == null ? null : Number(item.id),
     name: item.name || "",
     default: String(item.isDefaultShow ?? "0") === "1",
+  };
+}
+
+function invalidPlan(message, details) {
+  throw new GatewayError(message, {
+    code: "INVALID_HOSTING_PLAN",
+    status: 400,
+    details,
+  });
+}
+
+function normalizeAction(value) {
+  const action = String(value || "").trim();
+  if (!HOSTING_ACTIONS.includes(action)) {
+    invalidPlan("action must be start, update, or stop", { allowed: HOSTING_ACTIONS });
+  }
+  return action;
+}
+
+function normalizeMaterialPlan(input, inspection) {
+  const scopeRule = String(input.scopeRule || "").trim();
+  const allowedRules = inspection.options.scopeRules.map((item) => item.code).filter(Boolean);
+  if (!scopeRule || !allowedRules.includes(scopeRule)) {
+    invalidPlan("scopeRule must match a live hosting option", { allowed: allowedRules });
+  }
+  if (!Array.isArray(input.materialTypes) || input.materialTypes.length === 0) {
+    invalidPlan("materialTypes must contain at least one live hosting type");
+  }
+  const materialTypes = [...new Set(input.materialTypes.map(Number))];
+  const allowedTypes = inspection.options.materialTypes
+    .map((item) => Number(item.type))
+    .filter(Number.isFinite);
+  const invalid = materialTypes.filter((item) => !Number.isFinite(item) || !allowedTypes.includes(item));
+  if (invalid.length) invalidPlan("materialTypes contains unsupported values", { invalid, allowed: allowedTypes });
+  return { scopeRule, materialTypes };
+}
+
+function normalizeCommentPlan(input, inspection, action) {
+  const selectionMode = String(input.selectionMode || "").trim();
+  if (!["all", "selected"].includes(selectionMode)) {
+    invalidPlan("selectionMode must be all or selected");
+  }
+  if (selectionMode === "selected" && (!Number.isInteger(input.selectedCount) || input.selectedCount < 1)) {
+    invalidPlan("selectedCount must be a positive integer for selected mode");
+  }
+  const replyTuneId = Number(input.replyTuneId);
+  const textLengthId = Number(input.textLengthId);
+  const allowedTunes = inspection.comment.replyTunes.map((item) => item.id);
+  const allowedLengths = inspection.comment.textLengths.map((item) => item.id);
+  if (!allowedTunes.includes(replyTuneId)) {
+    invalidPlan("replyTuneId must match a live reply style", { allowed: allowedTunes });
+  }
+  if (!allowedLengths.includes(textLengthId)) {
+    invalidPlan("textLengthId must match a live text length", { allowed: allowedLengths });
+  }
+  if (action === "start" && input.acceptAgreement !== true) {
+    invalidPlan("acceptAgreement=true is required when planning comment hosting");
+  }
+  return {
+    selectionMode,
+    ...(selectionMode === "selected" ? { selectedCount: input.selectedCount } : {}),
+    replyTuneId,
+    textLengthId,
+    ...(action === "start" ? { acceptAgreement: true } : {}),
   };
 }
 
@@ -117,6 +182,31 @@ export class HostingAdapter {
         },
         replyTunes: Array.isArray(styles.replyTuneList) ? styles.replyTuneList.map(safeStyle) : [],
         textLengths: Array.isArray(styles.textLengthList) ? styles.textLengthList.map(safeStyle) : [],
+      },
+    };
+  }
+
+  async plan(type, input = {}) {
+    const action = normalizeAction(input.action);
+    const inspection = await this.inspect(type);
+    const normalizedInput = action === "stop"
+      ? {}
+      : type === "material"
+        ? normalizeMaterialPlan(input, inspection)
+        : normalizeCommentPlan(input, inspection, action);
+    const operation = type === "material"
+      ? { start: "openManageJob", update: "updateManageJob", stop: "clsoeManageJob" }[action]
+      : { start: "openCommentHosting", update: "updateReplyStyleData", stop: "operateHost" }[action];
+    return {
+      type,
+      action,
+      status: "live_write_validation_required",
+      executionEnabled: false,
+      currentStatus: inspection.status,
+      input: normalizedInput,
+      protocol: {
+        operation,
+        source: "official_frontend_static_analysis",
       },
     };
   }

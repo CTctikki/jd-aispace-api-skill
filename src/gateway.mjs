@@ -99,6 +99,11 @@ export class AiSpaceGateway {
     return this.workflowAdapter.runImageDownload(input);
   }
 
+  planMainRecommendationLabel(input) {
+    if (this.workflowAdapter === null) throw new Error("workflow adapter is not configured");
+    return this.workflowAdapter.planMainRecommendationLabel(input);
+  }
+
   readWorkflowRun(serviceCode, input) {
     if (this.workflowAdapter === null) throw new Error("workflow adapter is not configured");
     return this.workflowAdapter.readRun(serviceCode, input);
@@ -125,6 +130,11 @@ export class AiSpaceGateway {
     return this.hostingAdapter.inspect(type);
   }
 
+  planHosting(type, input) {
+    if (this.hostingAdapter === null) throw new Error("hosting adapter is not configured");
+    return this.hostingAdapter.plan(type, input);
+  }
+
   inspectActivitySignup() {
     if (this.activitySignupAdapter === null) throw new Error("activity signup adapter is not configured");
     return this.activitySignupAdapter.inspect();
@@ -133,6 +143,11 @@ export class AiSpaceGateway {
   validateActivitySignupFile(input) {
     if (this.activitySignupAdapter === null) throw new Error("activity signup adapter is not configured");
     return this.activitySignupAdapter.validateFile(input);
+  }
+
+  planActivitySignup(input) {
+    if (this.activitySignupAdapter === null) throw new Error("activity signup adapter is not configured");
+    return this.activitySignupAdapter.plan(input);
   }
 
   listTasks(input) {

@@ -23,8 +23,9 @@
 | AI 商品信息托管配置查询 | 已支持（只读） |
 | AI 评价回复托管状态、协议、语气和长度选项查询 | 已支持（只读） |
 | 批量报名预约活动模板、参数查询与本地 XLSX 预检 | 已支持（只读） |
-| 主推商品 AI 打标 | 参数协议已适配，待商家授权真实写操作验证 |
-| 托管启停、活动报名提交 | 待商家明确授权及真实数据验证 |
+| 主推商品 AI 打标 | 参数校验与只读执行计划已支持；真实执行待授权验证 |
+| 商品信息/评价回复托管 | 配置查询与只读变更计划已支持；真实启停待授权验证 |
+| 批量报名预约活动 | 模板、XLSX 预检与只读提交计划已支持；真实提交待授权验证 |
 | 7 个第三方 Flow 工具 | 服务代码与类型已识别；需先订购/授权并验证各自输入协议 |
 | 11 个第三方独立应用 | 服务代码与类型已识别；需先订购/授权并适配服务商接口 |
 | 未验证工具的自动执行 | 不支持，避免猜测参数 |
@@ -80,6 +81,7 @@ Invoke-RestMethod http://127.0.0.1:17321/v1/workflows/product-detail-inspection 
 
 - `POST /v1/workflows/main-image-inspection`
 - `POST /v1/workflows/image-download`
+- `POST /v1/workflows/main-recommendation-label/plan`（仅校验输入并返回脱敏执行计划）
 - `POST /v1/business-opportunity/ask`
 - `POST /v1/workflows/result`（只读结果回放）
 - `GET /v1/tasks`（只读任务历史，可恢复工作流 `threadId/runId`）
@@ -88,11 +90,11 @@ Invoke-RestMethod http://127.0.0.1:17321/v1/workflows/product-detail-inspection 
 - `GET /v1/services/access?serviceCode=FW_GOODS-...`（只返回脱敏后的可用状态和操作类型）
 - `POST /v1/services/launch`（仅对已开通服务准备启动上下文；要求 `confirm=true`，不会订购或自动授权）
 
-托管配置可通过 `GET /v1/hosting/:type` 查询；活动模板和文件预检使用 `GET /v1/activity-signup/schema` 与 `POST /v1/activity-signup/validate`。完整接口见 [`references/api.md`](references/api.md)。
+托管配置可通过 `GET /v1/hosting/:type` 查询，变更计划使用 `POST /v1/hosting/:type/plan`；活动模板、文件预检和提交计划分别使用 `GET /v1/activity-signup/schema`、`POST /v1/activity-signup/validate` 与 `POST /v1/activity-signup/plan`。所有 `plan` 接口都不会创建任务或修改店铺。完整接口见 [`references/api.md`](references/api.md)。
 
 ## 跟踪 AISpace 更新
 
-运行 `npm run marketplace:check` 校验 18 个第三方工具的公开服务代码，运行 `npm run marketplace:details:check` 校验公开功能清单，再运行 `npm run catalog:check` 检查登录后目录变化。确认协议并通过测试后，使用对应的 `*:update` 命令更新公开基线。详细流程见 [`references/maintenance.md`](references/maintenance.md)。
+运行 `npm run marketplace:check` 校验 18 个第三方工具的公开服务代码，运行 `npm run marketplace:details:check` 校验公开功能清单，运行 `npm run official-protocols:check` 校验三个官方写能力的公开前端协议指纹，再运行 `npm run catalog:check` 检查登录后目录变化。确认协议并通过测试后，使用对应的 `*:update` 命令更新公开基线。详细流程见 [`references/maintenance.md`](references/maintenance.md)。
 
 ## 安全设计
 

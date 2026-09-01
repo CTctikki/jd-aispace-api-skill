@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.0 - 2026-09-01
+
+- Add read-only plans for 主推商品 AI 打标、商品信息/评价回复托管 mutations, and activity signup submission.
+- Validate planned inputs against current hosting options and activity workbook/schema data without creating tasks or changing merchant settings.
+- Add anonymous official-frontend bundle fingerprints for detecting hosting, activity, and labeling protocol changes.
+
 ## 0.6.0 - 2026-09-01
 
 - Add an anonymous, read-only service-detail endpoint for descriptions, platform support, paradigms, and capability lists.
