@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.7.1 - 2026-09-01
+
+- Expose exact read, plan, and execute gateway actions for every currently adapted official tool.
+- Report the 26-tool baseline as four one-click tools, four write-plan-ready tools, and eighteen metadata-only tools.
+- Overlay current adapter capabilities onto cached live-catalog results so upgrades cannot retain stale readiness labels.
+- Add a privacy-enforcing verifier for future authorized write-protocol evidence.
+
 ## 0.7.0 - 2026-09-01
 
 - Add read-only plans for 主推商品 AI 打标、商品信息/评价回复托管 mutations, and activity signup submission.

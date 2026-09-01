@@ -9,7 +9,7 @@ Use the bundled local gateway instead of clicking through the merchant UI. Keep 
 
 ## Choose The Operation
 
-- List current tools with `GET /v1/services?refresh=true`.
+- List the bundled capability manifest with `GET /v1/tools`, or live services with `GET /v1/services?refresh=true`; use each tool's `gatewayActions` instead of inferring an endpoint from its name.
 - Search public 京麦服务市场 metadata with `GET /v1/marketplace/search?query=<name>&classify=tools`; prefer exact-name matches.
 - Inspect a public service description and capability list with `GET /v1/marketplace/services/<serviceCode>`; this does not require a merchant login.
 - Check whether the current account can use or request a service with `GET /v1/services/access?serviceCode=<code>`; the response omits account-specific tips.
@@ -57,4 +57,4 @@ If execution returns `timedOut=true`, retain `threadId` and `runId`, then call `
 
 ## Maintain For AISpace Changes
 
-Run `npm run marketplace:check`, `npm run marketplace:details:check`, `npm run official-protocols:check`, and `npm run catalog:check` after AISpace changes. Read `references/maintenance.md` before changing adapters. A public bundle fingerprint can justify updating a read-only plan, but never enables a write adapter by itself; update execution only after behavior is observed with an authorized account, the protocol change is confirmed, and regression tests pass.
+Run `npm run marketplace:check`, `npm run marketplace:details:check`, `npm run official-protocols:check`, and `npm run catalog:check` after AISpace changes. Read `references/maintenance.md` before changing adapters. A public bundle fingerprint can justify updating a read-only plan, but never enables a write adapter by itself. Before implementing a write adapter, validate field-only evidence with `npm run trace:verify -- <sanitized-trace.json>`; this does not replace explicit authorization, allowlisting, regression tests, or a minimal successful live validation.

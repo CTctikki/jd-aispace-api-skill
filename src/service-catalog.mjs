@@ -1,7 +1,12 @@
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { APP_IDS, OPERATIONS } from "./operations.mjs";
-import { ADAPTER_STATUS_BY_SERVICE, TOOL_REGISTRY } from "./tool-registry.mjs";
+import {
+  ADAPTER_STATUS_BY_SERVICE,
+  GATEWAY_ACTIONS_BY_SERVICE,
+  summarizeAdapterCapabilities,
+  TOOL_REGISTRY,
+} from "./tool-registry.mjs";
 import { WORKFLOW_TOOLS } from "./adapters/workflow-tools.mjs";
 
 const CATEGORY_NAMES = Object.freeze({
@@ -58,6 +63,28 @@ function summarizeAgent(data = {}) {
     name: data.expertName || "",
     description: data.expertIntroduction || "",
     avatarUrl: data.expertAvatar || "",
+  };
+}
+
+function overlayRegistryCapabilities(snapshot) {
+  if (!Array.isArray(snapshot?.tools)) return snapshot;
+  const tools = snapshot.tools.map((tool) => {
+    const adapterStatus = ADAPTER_STATUS_BY_SERVICE[tool.serviceCode];
+    const gatewayActions = GATEWAY_ACTIONS_BY_SERVICE[tool.serviceCode];
+    if (!adapterStatus && !gatewayActions) return tool;
+    return {
+      ...tool,
+      ...(adapterStatus ? { adapterStatus } : {}),
+      gatewayActions: gatewayActions || [],
+    };
+  });
+  return {
+    ...snapshot,
+    summary: {
+      ...(snapshot.summary || {}),
+      ...summarizeAdapterCapabilities(tools),
+    },
+    tools,
   };
 }
 
@@ -147,7 +174,9 @@ export class ServiceCatalog {
 
   async discover({ refresh = false } = {}) {
     const cached = await this.readCache();
-    if (!refresh && this.isFresh(cached)) return { ...cached, cache: "hit" };
+    if (!refresh && this.isFresh(cached)) {
+      return { ...overlayRegistryCapabilities(cached), cache: "hit" };
+    }
     const portalRequest = {
       request: {
         belongParam: { client: "WEB" },
@@ -238,6 +267,7 @@ export class ServiceCatalog {
         paradigm,
         executionMode: executionMode(paradigm),
         adapterStatus: "metadata_resolved",
+        gatewayActions: [],
         launch: {
           type: null,
           url: null,
@@ -266,6 +296,7 @@ export class ServiceCatalog {
         withServiceCode: tools.filter((tool) => tool.serviceCode).length,
         metadataResolved: tools.filter((tool) => tool.service?.status === "resolved").length,
         executionModes: Object.fromEntries(modes.map((mode) => [mode, tools.filter((tool) => tool.executionMode === mode).length])),
+        ...summarizeAdapterCapabilities(tools),
       },
       tools,
     };

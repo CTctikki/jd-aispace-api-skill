@@ -1,4 +1,7 @@
 import assert from "node:assert/strict";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
 import test from "node:test";
 import { ServiceCatalog } from "../src/service-catalog.mjs";
 
@@ -40,9 +43,12 @@ test("catalog uses required portal request", async () => {
   assert.equal(tool.adapterStatus, "one_click_ready");
   assert.equal(
     result.tools.find((entry) => entry.serviceCode === "FW_GOODS-1970807").adapterStatus,
-    "confirmation_validation_required",
+    "write_plan_ready",
   );
   assert.equal(result.summary.withServiceCode, 26);
+  assert.equal(result.summary.oneClickReady, 4);
+  assert.equal(result.summary.writePlanReady, 4);
+  assert.equal(result.summary.metadataOnly, 18);
 });
 
 test("catalog maps purchased expert services to callable agent metadata", async () => {
@@ -96,6 +102,41 @@ test("catalog returns fresh memory cache without new calls", async () => {
   const cached = await catalog.discover();
   assert.equal(cached.cache, "hit");
   assert.equal(client.calls.length, callCount);
+});
+
+test("catalog overlays current gateway capabilities onto fresh disk cache", async () => {
+  const directory = await mkdtemp(path.join(os.tmpdir(), "aispace-catalog-"));
+  const cachePath = path.join(directory, "services.json");
+  await writeFile(cachePath, JSON.stringify({
+    generatedAt: "2026-09-01T00:00:00.000Z",
+    cache: "miss",
+    source: {},
+    summary: { total: 1, withServiceCode: 1 },
+    tools: [{
+      id: 14,
+      category: "商品素材",
+      name: "主推商品AI打标",
+      publisher: "official",
+      serviceCode: "FW_GOODS-1970807",
+      adapterStatus: "confirmation_validation_required",
+    }],
+  }), "utf8");
+  try {
+    const catalog = new ServiceCatalog({
+      client: { async call() { throw new Error("fresh cache must avoid network calls"); } },
+      cachePath,
+      now: () => Date.parse("2026-09-01T00:01:00.000Z"),
+    });
+    const result = await catalog.discover();
+    assert.equal(result.cache, "hit");
+    assert.equal(result.tools[0].adapterStatus, "write_plan_ready");
+    assert.equal(result.tools[0].gatewayActions[0].path, "/v1/workflows/main-recommendation-label/plan");
+    assert.equal(result.summary.oneClickReady, 0);
+    assert.equal(result.summary.writePlanReady, 1);
+    assert.equal(result.summary.metadataOnly, 0);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
 });
 
 test("catalog retries service resolution after marketplace rate limiting", async () => {

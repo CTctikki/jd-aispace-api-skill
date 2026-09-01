@@ -1,6 +1,6 @@
 {
   "name": "jd-aispace-api-skill",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "private": true,
   "type": "module",
   "description": "Codex skill and local gateway for JD AISpace merchant tools",
@@ -21,6 +21,7 @@
     "marketplace:details:update": "node scripts/check-marketplace-details.mjs --write",
     "official-protocols:check": "node scripts/check-official-protocols.mjs",
     "official-protocols:update": "node scripts/check-official-protocols.mjs --write",
+    "trace:verify": "node scripts/verify-authorized-trace.mjs",
     "catalog:check": "node scripts/check-catalog.mjs",
     "catalog:update": "node scripts/check-catalog.mjs --write"
   }

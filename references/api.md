@@ -5,13 +5,15 @@ All endpoints bind to `127.0.0.1` by default. When `AISPACE_GATEWAY_TOKEN` is se
 ## Discovery
 
 - `GET /health`: process health.
-- `GET /v1/tools`: bundled 26-tool baseline.
-- `GET /v1/services?refresh=true`: live catalog discovery and adapter status.
+- `GET /v1/tools`: bundled 26-tool baseline. Each adapted official tool includes exact `gatewayActions` entries with `id`, `method`, `path`, `mode`, and `confirmationRequired`.
+- `GET /v1/services?refresh=true`: live catalog discovery and current adapter status. Cached discovery metadata is overlaid with the installed gateway's current statuses and actions.
 - `GET /v1/marketplace/search?query=工具名&classify=tools`: public read-only marketplace search. `classify` accepts `tools` or `services`.
 - `GET /v1/marketplace/services/FW_GOODS-...`: public read-only service description, platform support, paradigm, and capability list. Provider identities, app keys, internal IDs, and audit fields are omitted.
 - `GET /v1/services/access?serviceCode=FW_GOODS-...`: authenticated, privacy-filtered service availability and permitted action metadata.
 - `POST /v1/services/resolve`: body `{ "serviceCode": "..." }`.
 - `POST /v1/workflows/inspect`: body `{ "serviceCode": "..." }`.
+
+Both tool-list responses summarize `oneClickReady`, `writePlanReady`, and `metadataOnly`. `write_plan_ready` means the gateway can inspect and validate a proposed mutation but cannot execute it. It must not be interpreted as write support.
 
 ## Service Launch Preflight
 

@@ -114,7 +114,7 @@
     "serviceCode": "FW_GOODS-1967204",
     "paradigm": "INDEPENDENCE",
     "executionMode": "independent_application",
-    "adapterStatus": "read_only_ready"
+    "adapterStatus": "write_plan_ready"
   },
   {
     "name": "AI商机情报",
@@ -132,7 +132,7 @@
     "serviceCode": "FW_GOODS-1968201",
     "paradigm": "INDEPENDENCE",
     "executionMode": "independent_application",
-    "adapterStatus": "read_only_ready"
+    "adapterStatus": "write_plan_ready"
   },
   {
     "name": "批量报名预约活动",
@@ -141,7 +141,7 @@
     "serviceCode": "FW_GOODS-1968204",
     "paradigm": "FLOW",
     "executionMode": "tool_backend",
-    "adapterStatus": "preflight_ready"
+    "adapterStatus": "write_plan_ready"
   },
   {
     "name": "商详信息AI全巡检",
@@ -204,7 +204,7 @@
     "serviceCode": "FW_GOODS-1970807",
     "paradigm": "FLOW",
     "executionMode": "workflow_stream",
-    "adapterStatus": "confirmation_validation_required"
+    "adapterStatus": "write_plan_ready"
   },
   {
     "name": "SicoAI生图侠",

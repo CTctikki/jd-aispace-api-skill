@@ -25,7 +25,25 @@ test("registry contains all 26 discovered tools", () => {
     official: 8,
     thirdParty: 18,
     serviceCodesKnown: 26,
+    oneClickReady: 4,
+    writePlanReady: 4,
+    metadataOnly: 18,
   });
+  const label = TOOL_REGISTRY.find((tool) => tool.serviceCode === "FW_GOODS-1970807");
+  assert.equal(label.adapterStatus, "write_plan_ready");
+  assert.deepEqual(label.gatewayActions, [{
+    id: "plan",
+    method: "POST",
+    path: "/v1/workflows/main-recommendation-label/plan",
+    mode: "plan",
+    confirmationRequired: false,
+  }]);
+  const inspection = TOOL_REGISTRY.find((tool) => tool.serviceCode === "FW_GOODS-1968206");
+  assert.equal(inspection.gatewayActions.some((action) => (
+    action.path === "/v1/workflows/product-detail-inspection"
+    && action.mode === "execute"
+    && action.confirmationRequired === true
+  )), true);
 });
 
 test("gateway delegates public marketplace search", async () => {

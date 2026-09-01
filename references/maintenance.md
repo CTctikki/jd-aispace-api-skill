@@ -24,10 +24,14 @@ The gateway resolves service metadata serially with a short delay by default bec
 6. Allowlist fixed service mappings and hosts. Never accept arbitrary workflow IDs, DSM method names, or report hosts from callers.
 7. Add typed validation and require `confirm=true` for every mutating operation.
 8. Redact access context, account identifiers, cookies, auth codes, tokens, and employee/vendor identity fields.
-9. Add a failing regression test for a reproduced protocol change, then make the smallest implementation change.
-10. Validate with `npm test`, `quick_validate.py`, a secret scan, and one minimal real task when authorized.
+9. Describe only field names, fixed methods, ordering, and success shapes in a sanitized evidence JSON; never save raw request or response values.
+10. Run `npm run trace:verify -- <sanitized-trace.json>`. The verifier must accept the evidence before an executable write adapter is added.
+11. Add a failing regression test for the reproduced protocol change, then make the smallest implementation change.
+12. Validate with `npm test`, `quick_validate.py`, a secret scan, and one minimal real task when authorized.
 
 The official AI Market container currently resolves metadata with `queryServiceByCode`, prepares an active service with `useServiceNow`, and obtains `getMicroAppAuthCode` only after explicit authorization. Keep these stages separate. The launch response can contain signed `url`, `callbackUrl`, `code`, `state`, `fwState`, and `sign` values; never return or persist their values. Expose only sanitized endpoint metadata until the vendor protocol is independently observed and allowlisted.
+
+The authorized-trace verifier accepts three evidence families: main-recommendation labeling (`CODE501`, input card `404`, feedback root, and terminal result shape), material/comment hosting (action-specific DSM method plus request/result field shapes), and activity signup (upload, register, duplicate-check, and create stages in order). It rejects common credential, account, product, file, and runtime identifier fields. See `references/authorized-traces.md` for the field-only schema. Passing this structural check is necessary but not sufficient: explicit user authorization, code review, allowlisting, regression tests, and a minimal successful live validation are still required.
 
 ## Update The Baseline
 
