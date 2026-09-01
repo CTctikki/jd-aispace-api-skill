@@ -17,7 +17,7 @@
 | AI 商机情报问答与流式结果汇总 | 已支持 |
 | AI 商品信息托管配置查询 | 已支持（只读） |
 | AI 评价回复托管状态、协议、语气和长度选项查询 | 已支持（只读） |
-| 批量报名预约活动模板与参数查询 | 已支持（只读） |
+| 批量报名预约活动模板、参数查询与本地 XLSX 预检 | 已支持（只读） |
 | 主推商品 AI 打标 | 参数协议已适配，待商家授权真实写操作验证 |
 | 托管启停、活动报名提交 | 待商家明确授权及真实数据验证 |
 | 其余 18 个第三方工具 | 当前账号未返回服务代码或启动入口，暂不可直接调用 |
@@ -77,7 +77,7 @@ Invoke-RestMethod http://127.0.0.1:17321/v1/workflows/product-detail-inspection 
 - `POST /v1/business-opportunity/ask`
 - `POST /v1/workflows/result`（只读结果回放）
 
-托管配置和活动模板可分别通过 `GET /v1/hosting/:type` 与 `GET /v1/activity-signup/schema` 查询。完整接口见 [`references/api.md`](references/api.md)。
+托管配置可通过 `GET /v1/hosting/:type` 查询；活动模板和文件预检使用 `GET /v1/activity-signup/schema` 与 `POST /v1/activity-signup/validate`。完整接口见 [`references/api.md`](references/api.md)。
 
 ## 跟踪 AISpace 更新
 

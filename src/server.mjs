@@ -136,6 +136,10 @@ export function createServer({ gateway, token = "" }) {
       if (request.method === "GET" && url.pathname === "/v1/activity-signup/schema") {
         return sendJson(response, 200, await gateway.inspectActivitySignup());
       }
+      if (request.method === "POST" && url.pathname === "/v1/activity-signup/validate") {
+        const body = await readJson(request);
+        return sendJson(response, 200, await gateway.validateActivitySignupFile(body.input || {}));
+      }
       return sendJson(response, 404, { error: { code: "NOT_FOUND" } });
     } catch (error) {
       const status = error instanceof GatewayError ? error.status : 500;

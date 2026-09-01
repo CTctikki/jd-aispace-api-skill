@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { ActivitySignupAdapter, ACTIVITY_SIGNUP_APP_ID } from "../src/adapters/activity-signup.mjs";
+import {
+  ActivitySignupAdapter,
+  ACTIVITY_SIGNUP_APP_ID,
+  validateActivitySignupSheets,
+} from "../src/adapters/activity-signup.mjs";
 import { HostingAdapter } from "../src/adapters/hosting.mjs";
 
 test("hosting inspection returns only actionable safe configuration", async () => {
@@ -79,4 +83,33 @@ test("activity signup schema parses the fixed official app", async () => {
   assert.equal(result.version, "11");
   assert.equal(result.fields[0].name, "inputExcel");
   assert.equal(JSON.stringify(result).includes("hidden"), false);
+});
+
+test("activity signup preflight validates both official worksheet formats without returning product ids", () => {
+  const result = validateActivitySignupSheets([
+    {
+      name: "POP商家",
+      rows: [
+        ["预约开始时间（必填）", "预约结束时间（必填）", "抢购开始时间（必填）", "抢购结束时间（必填）", "预约类型（必填）", "预约开始前销售（必填）", "预约时校验手机号（必填）", "同SPU合并为组（必填）", "预约成功后自动加车（必填）", "预约SPU（必填）"],
+        ["2026-09-01", "2026-09-02", "2026-09-03", "2026-09-04", "预约购买资格", "可销售", "不需校验", "合并为组", "是", "1234567890"],
+      ],
+    },
+  ]);
+  assert.equal(result.valid, true);
+  assert.equal(result.totalRows, 1);
+  assert.equal(JSON.stringify(result).includes("1234567890"), false);
+});
+
+test("activity signup preflight rejects unchanged example product ids", () => {
+  const result = validateActivitySignupSheets([
+    {
+      name: "自营供应商",
+      rows: [
+        ["预约开始时间（必填）", "预约结束时间（必填）", "抢购开始时间（必填）", "抢购结束时间（必填）", "预约类型（必填）", "预约开始前销售（必填）", "预约时校验手机号（必填）", "预约成功后自动加车（必填）", "预约SKU（必填）"],
+        ["2026-09-01", "2026-09-02", "2026-09-03", "2026-09-04", "预约购买资格", "可销售", "不需校验", "是", "11111111111"],
+      ],
+    },
+  ]);
+  assert.equal(result.valid, false);
+  assert.equal(result.errors[0].code, "INVALID_PRODUCT_ID");
 });

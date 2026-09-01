@@ -157,7 +157,10 @@ test("hosting and activity schema endpoints are read-only", async () => {
   const gateway = new AiSpaceGateway({
     client: {},
     hostingAdapter: { async inspect(type) { return { type }; } },
-    activitySignupAdapter: { async inspect() { return { appName: "批量预约活动报名" }; } },
+    activitySignupAdapter: {
+      async inspect() { return { appName: "批量预约活动报名" }; },
+      async validateFile(input) { return { valid: true, fileName: input.filePath }; },
+    },
   });
   await withServer(async (baseUrl) => {
     const headers = { authorization: "Bearer test-token" };
@@ -170,5 +173,12 @@ test("hosting and activity schema endpoints are read-only", async () => {
     const activity = await fetch(`${baseUrl}/v1/activity-signup/schema`, { headers });
     assert.equal(activity.status, 200);
     assert.equal((await activity.json()).appName, "批量预约活动报名");
+    const validation = await fetch(`${baseUrl}/v1/activity-signup/validate`, {
+      method: "POST",
+      headers: { ...headers, "content-type": "application/json" },
+      body: JSON.stringify({ input: { filePath: "activity.xlsx" } }),
+    });
+    assert.equal(validation.status, 200);
+    assert.deepEqual(await validation.json(), { valid: true, fileName: "activity.xlsx" });
   }, gateway);
 });

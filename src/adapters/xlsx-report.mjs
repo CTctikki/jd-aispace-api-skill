@@ -1,4 +1,5 @@
 import { inflateRawSync } from "node:zlib";
+import path from "node:path";
 
 const MAX_REPORT_BYTES = 20 * 1024 * 1024;
 
@@ -93,12 +94,44 @@ export function parseInspectionWorkbook(buffer) {
   }));
 }
 
-function parseFirstWorksheet(buffer) {
+export function parseWorkbookSheets(buffer) {
   const entries = unzipEntries(buffer);
-  const worksheet = entries.get("xl/worksheets/sheet1.xml")?.toString("utf8");
-  if (!worksheet) throw new Error("Workflow report has no first worksheet");
   const sharedStrings = entries.get("xl/sharedStrings.xml")?.toString("utf8") || "";
-  const [headers = [], ...rows] = parseWorksheetXml(sharedStrings, worksheet);
+  const workbook = entries.get("xl/workbook.xml")?.toString("utf8") || "";
+  const relationships = entries.get("xl/_rels/workbook.xml.rels")?.toString("utf8") || "";
+  const targets = new Map([...relationships.matchAll(/<Relationship\b([^>]*)\/?\s*>/g)].map((match) => {
+    const attributes = match[1];
+    return [
+      attributes.match(/\bId="([^"]+)"/)?.[1] || "",
+      attributes.match(/\bTarget="([^"]+)"/)?.[1] || "",
+    ];
+  }).filter(([id, target]) => id && target));
+  const sheets = [...workbook.matchAll(/<sheet\b([^>]*)\/?\s*>/g)].map((match, index) => {
+    const attributes = match[1];
+    const name = decodeXml(attributes.match(/\bname="([^"]+)"/)?.[1] || `Sheet${index + 1}`);
+    const relationshipId = attributes.match(/\br:id="([^"]+)"/)?.[1] || "";
+    const target = targets.get(relationshipId) || `worksheets/sheet${index + 1}.xml`;
+    const entryName = target.startsWith("/")
+      ? target.slice(1)
+      : target.startsWith("xl/")
+        ? target
+        : path.posix.normalize(path.posix.join("xl", target));
+    const worksheet = entries.get(entryName)?.toString("utf8");
+    if (!worksheet) throw new Error(`Workbook worksheet is missing: ${name}`);
+    return { name, rows: parseWorksheetXml(sharedStrings, worksheet) };
+  });
+  if (sheets.length === 0) {
+    const worksheet = entries.get("xl/worksheets/sheet1.xml")?.toString("utf8");
+    if (!worksheet) throw new Error("Workbook has no worksheet");
+    return [{ name: "Sheet1", rows: parseWorksheetXml(sharedStrings, worksheet) }];
+  }
+  return sheets;
+}
+
+function parseFirstWorksheet(buffer) {
+  const [{ rows: worksheetRows } = {}] = parseWorkbookSheets(buffer);
+  if (!worksheetRows) throw new Error("Workflow report has no first worksheet");
+  const [headers = [], ...rows] = worksheetRows;
   return [headers.map(String), rows.filter((row) => row.some((value) => value !== ""))];
 }
 

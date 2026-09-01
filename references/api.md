@@ -79,6 +79,7 @@ The ask response includes `answer`, `thinking`, `traceId`, `groupId`, `status`, 
 - `GET /v1/hosting/material` returns current 商品信息托管 status and allowed settings.
 - `GET /v1/hosting/comment-reply` returns current 评价回复托管 status, agreement metadata, reply tone options, and text-length options.
 - `GET /v1/activity-signup/schema` returns the current 批量预约活动报名 version, accepted input fields, and official template URL.
+- `POST /v1/activity-signup/validate` accepts `{"input":{"filePath":"C:\\\\path\\\\activity.xlsx"}}` and validates the official POP商家/自营供应商 worksheets locally. It returns only row counts and error locations, never SKU/SPU values.
 
 These endpoints are read-only. Starting or changing continuous hosting, submitting activity registrations, and 主推商品 AI 打标 remain disabled until an authorized merchant explicitly approves a live write validation.
 

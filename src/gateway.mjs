@@ -105,6 +105,11 @@ export class AiSpaceGateway {
     return this.activitySignupAdapter.inspect();
   }
 
+  validateActivitySignupFile(input) {
+    if (this.activitySignupAdapter === null) throw new Error("activity signup adapter is not configured");
+    return this.activitySignupAdapter.validateFile(input);
+  }
+
   prepareServiceLaunch(serviceCode, { confirm = false } = {}) {
     return this.callOperation(
       "service.use",

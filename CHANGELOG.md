@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0 - 2026-09-01
+
+- Add local, privacy-safe XLSX preflight validation for 批量报名预约活动.
+
 ## 0.2.2 - 2026-09-01
 
 - Expand catalog discovery to official experts, purchased services, published Flow apps, and purchased expert Agent metadata.

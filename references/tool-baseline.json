@@ -195,7 +195,7 @@
     "serviceCode": "FW_GOODS-1968204",
     "paradigm": "FLOW",
     "executionMode": "tool_backend",
-    "adapterStatus": "schema_ready"
+    "adapterStatus": "preflight_ready"
   },
   {
     "name": "商详信息AI全巡检",

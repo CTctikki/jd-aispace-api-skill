@@ -35,7 +35,7 @@ export const ADAPTER_STATUS_BY_SERVICE = Object.freeze({
   "FW_GOODS-1968001": "one_click_ready",
   "FW_GOODS-1968201": "read_only_ready",
   "FW_GOODS-1967204": "read_only_ready",
-  "FW_GOODS-1968204": "schema_ready",
+  "FW_GOODS-1968204": "preflight_ready",
 });
 
 export const TOOL_REGISTRY = Object.freeze(tools.map(([category, name, publisher, serviceCode = null], index) => Object.freeze({
