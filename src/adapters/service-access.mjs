@@ -6,7 +6,7 @@ function operationRequest(payload) {
   return { appId: operation.appId, api: operation.api, payload };
 }
 
-function validateServiceCode(serviceCode) {
+export function validateServiceCode(serviceCode) {
   const normalized = String(serviceCode || "").trim();
   if (!/^FW_GOODS-\d+$/.test(normalized)) {
     throw new GatewayError("serviceCode must use the FW_GOODS-<digits> format", {

@@ -50,6 +50,25 @@ test("gateway delegates sanitized service access inspection", async () => {
   });
 });
 
+test("gateway requires confirmation for sanitized service launch", async () => {
+  const gateway = new AiSpaceGateway({
+    client: {},
+    serviceLaunchAdapter: {
+      async prepare(serviceCode) {
+        return { serviceCode, status: "launch_ready" };
+      },
+    },
+  });
+  await assert.rejects(
+    () => gateway.prepareServiceLaunch("FW_GOODS-1961214"),
+    ConfirmationRequiredError,
+  );
+  assert.deepEqual(
+    await gateway.prepareServiceLaunch("FW_GOODS-1961214", { confirm: true }),
+    { serviceCode: "FW_GOODS-1961214", status: "launch_ready" },
+  );
+});
+
 test("gateway delegates dynamic service discovery", async () => {
   const expected = { summary: { total: 26 } };
   const gateway = new AiSpaceGateway({

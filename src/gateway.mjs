@@ -13,6 +13,7 @@ export class AiSpaceGateway {
     taskHistoryAdapter = null,
     marketplaceSearchAdapter = null,
     serviceAccessAdapter = null,
+    serviceLaunchAdapter = null,
   }) {
     this.client = client;
     this.catalog = catalog;
@@ -23,6 +24,7 @@ export class AiSpaceGateway {
     this.taskHistoryAdapter = taskHistoryAdapter;
     this.marketplaceSearchAdapter = marketplaceSearchAdapter;
     this.serviceAccessAdapter = serviceAccessAdapter;
+    this.serviceLaunchAdapter = serviceLaunchAdapter;
   }
 
   getRegistry() {
@@ -131,11 +133,9 @@ export class AiSpaceGateway {
     return this.taskHistoryAdapter.list(input);
   }
 
-  prepareServiceLaunch(serviceCode, { confirm = false } = {}) {
-    return this.callOperation(
-      "service.use",
-      { request: { serviceCode } },
-      { confirm },
-    );
+  async prepareServiceLaunch(serviceCode, { confirm = false } = {}) {
+    if (!confirm) throw new ConfirmationRequiredError("service.launch");
+    if (this.serviceLaunchAdapter === null) throw new Error("service launch adapter is not configured");
+    return this.serviceLaunchAdapter.prepare(serviceCode);
   }
 }

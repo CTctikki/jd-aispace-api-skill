@@ -25,6 +25,8 @@ The gateway resolves service metadata serially with a short delay by default bec
 9. Add a failing regression test for a reproduced protocol change, then make the smallest implementation change.
 10. Validate with `npm test`, `quick_validate.py`, a secret scan, and one minimal real task when authorized.
 
+The official AI Market container currently resolves metadata with `queryServiceByCode`, prepares an active service with `useServiceNow`, and obtains `getMicroAppAuthCode` only after explicit authorization. Keep these stages separate. The launch response can contain signed `url`, `callbackUrl`, `code`, `state`, `fwState`, and `sign` values; never return or persist their values. Expose only sanitized endpoint metadata until the vendor protocol is independently observed and allowlisted.
+
 ## Update The Baseline
 
 After review and validation, run `npm run catalog:update`. Inspect the diff before committing. The baseline stores only tool metadata and must never contain runtime responses, account data, task IDs, or credentials.
@@ -35,3 +37,4 @@ After review and validation, run `npm run catalog:update`. Inspect the diff befo
 - Stop if a purchase, authorization, publication, product mutation, or task creation lacks explicit user authorization.
 - Stop if request fields or effects are uncertain. Keep the tool metadata-only until verified.
 - Never automate `zeroOrFreePurchaseOrder`.
+- Never call `getMicroAppAuthCode` from launch preflight or expose a raw DSM-operation HTTP endpoint.

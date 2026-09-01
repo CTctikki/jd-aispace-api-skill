@@ -10,6 +10,7 @@ import { HostingAdapter } from "./adapters/hosting.mjs";
 import { TaskHistoryAdapter } from "./adapters/tasks.mjs";
 import { MarketplaceSearchAdapter } from "./adapters/marketplace-search.mjs";
 import { ServiceAccessAdapter } from "./adapters/service-access.mjs";
+import { ServiceLaunchAdapter } from "./adapters/service-launch.mjs";
 import { DirectHttpTransport } from "./transports/direct-http.mjs";
 import { HttpBridgeTransport } from "./transports/http-bridge.mjs";
 import { ChromeProfileTransport } from "./transports/chrome-profile.mjs";
@@ -26,6 +27,7 @@ const transport = config.bridgeUrl
     : new DirectHttpTransport({ cookie: config.cookie, dsmEid: config.dsmEid });
 const client = new SffClient({ transport });
 const publicMarketplaceClient = new SffClient({ transport: new DirectHttpTransport() });
+const serviceAccessAdapter = new ServiceAccessAdapter({ client });
 const gateway = new AiSpaceGateway({
   client,
   catalog: new ServiceCatalog({
@@ -42,7 +44,8 @@ const gateway = new AiSpaceGateway({
   activitySignupAdapter: new ActivitySignupAdapter({ client }),
   taskHistoryAdapter: new TaskHistoryAdapter({ client }),
   marketplaceSearchAdapter: new MarketplaceSearchAdapter({ client: publicMarketplaceClient }),
-  serviceAccessAdapter: new ServiceAccessAdapter({ client }),
+  serviceAccessAdapter,
+  serviceLaunchAdapter: new ServiceLaunchAdapter({ client, accessAdapter: serviceAccessAdapter }),
 });
 const server = createServer({ gateway, token: config.token });
 

@@ -12,6 +12,7 @@ Use the bundled local gateway instead of clicking through the merchant UI. Keep 
 - List current tools with `GET /v1/services?refresh=true`.
 - Search public 京麦服务市场 metadata with `GET /v1/marketplace/search?query=<name>&classify=tools`; prefer exact-name matches.
 - Check whether the current account can use or request a service with `GET /v1/services/access?serviceCode=<code>`; the response omits account-specific tips.
+- Prepare the launch context of an already active service with `POST /v1/services/launch` and `confirm=true`; the response exposes only endpoint origins and query-key names.
 - Inspect an allowlisted workflow with `POST /v1/workflows/inspect`.
 - Run 商详信息 AI 全巡检 with `POST /v1/workflows/product-detail-inspection`.
 - Run 商详主图 AI 巡检 with `POST /v1/workflows/main-image-inspection`.
@@ -39,6 +40,8 @@ Use the bundled local gateway instead of clicking through the merchant UI. Keep 
 - Treat catalog, metadata, and result replay as read-only.
 - Never print, persist, commit, or return Cookies, auth codes, access contexts, tokens, account identifiers, or decrypted credentials.
 - Never invoke `zeroOrFreePurchaseOrder` automatically.
+- Never call the launch endpoint for an inactive service. If it returns `authorization_required`, stop and request explicit authorization instead of obtaining a micro-app auth code.
+- Never expose a generic raw-operation HTTP endpoint; launch URLs can contain signed account-bound credentials.
 - Treat public service codes as discovery metadata, not execution proof. Third-party Flow and independent applications still require an observed, authorized launch/input protocol.
 - If the profile is locked, ask for a stopped or dedicated profile instead of taking over the visible browser.
 - If a tool lacks a verified adapter, report metadata only. Do not guess hidden fields or claim it is executable.

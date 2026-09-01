@@ -47,15 +47,6 @@ export function createServer({ gateway, token = "" }) {
       if (request.method === "GET" && url.pathname === "/v1/tools") {
         return sendJson(response, 200, gateway.getRegistry());
       }
-      if (request.method === "POST" && url.pathname === "/v1/operations/call") {
-        const body = await readJson(request);
-        const result = await gateway.callOperation(
-          body.operation,
-          body.payload || {},
-          { confirm: body.confirm === true },
-        );
-        return sendJson(response, 200, result);
-      }
       if (request.method === "POST" && url.pathname === "/v1/services/resolve") {
         const body = await readJson(request);
         const result = await gateway.resolveService(body.serviceCode);
@@ -78,6 +69,14 @@ export function createServer({ gateway, token = "" }) {
       }
       if (request.method === "GET" && url.pathname === "/v1/services/access") {
         const result = await gateway.inspectServiceAccess(url.searchParams.get("serviceCode"));
+        return sendJson(response, 200, result);
+      }
+      if (request.method === "POST" && url.pathname === "/v1/services/launch") {
+        const body = await readJson(request);
+        const result = await gateway.prepareServiceLaunch(
+          body.serviceCode,
+          { confirm: body.confirm === true },
+        );
         return sendJson(response, 200, result);
       }
       if (request.method === "GET" && url.pathname === "/v1/tasks") {

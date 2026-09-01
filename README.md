@@ -13,6 +13,7 @@
 | 已识别 6 类、26 个工具及真实服务代码 | 已支持 |
 | 京麦服务市场工具搜索与精确匹配 | 已支持（公开只读接口） |
 | 服务订购/使用权限状态查询 | 已支持（登录后只读、身份脱敏） |
+| 已开通服务的启动上下文预检 | 已支持（需确认、仅返回域名与参数名，不返回签名值） |
 | 4 个官方商品工作流元数据与 AG-UI 流协议 | 已支持 |
 | 商详信息 AI 全巡检自动启动、提交、结果重放 | 已支持 |
 | 商详主图 AI 巡检自动执行与报告解析 | 已支持 |
@@ -83,6 +84,7 @@ Invoke-RestMethod http://127.0.0.1:17321/v1/workflows/product-detail-inspection 
 - `GET /v1/tasks`（只读任务历史，可恢复工作流 `threadId/runId`）
 - `GET /v1/marketplace/search?query=工具名`（公开服务市场精确检索，不使用店铺 Cookie）
 - `GET /v1/services/access?serviceCode=FW_GOODS-...`（只返回脱敏后的可用状态和操作类型）
+- `POST /v1/services/launch`（仅对已开通服务准备启动上下文；要求 `confirm=true`，不会订购或自动授权）
 
 托管配置可通过 `GET /v1/hosting/:type` 查询；活动模板和文件预检使用 `GET /v1/activity-signup/schema` 与 `POST /v1/activity-signup/validate`。完整接口见 [`references/api.md`](references/api.md)。
 
@@ -96,6 +98,7 @@ Invoke-RestMethod http://127.0.0.1:17321/v1/workflows/product-detail-inspection 
 - 执行类接口强制要求 `confirm=true`。
 - 登录 Cookie 仅在内存中按域名短期缓存，不写入结果或日志。
 - 公开响应会移除身份与认证字段。
+- 服务启动响应仅保留目标域名和查询参数名，不返回签名、授权码、状态值或原始 URL；原始 DSM 操作不通过 HTTP 暴露。
 - 报告解析只保留 SKU、终端、巡检位置和命中结果。
 - 持续托管、商品打标和活动报名等写操作在真实验证前不会标记为可用。
 

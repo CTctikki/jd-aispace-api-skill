@@ -85,6 +85,50 @@ test("service access endpoint returns sanitized state", async () => {
   }, gateway);
 });
 
+test("service launch endpoint requires confirmation and returns sanitized state", async () => {
+  const gateway = new AiSpaceGateway({
+    client: {},
+    serviceLaunchAdapter: {
+      async prepare(serviceCode) {
+        return { serviceCode, status: "authorization_required" };
+      },
+    },
+  });
+  await withServer(async (baseUrl) => {
+    const denied = await fetch(`${baseUrl}/v1/services/launch`, {
+      method: "POST",
+      headers: { authorization: "Bearer test-token", "content-type": "application/json" },
+      body: JSON.stringify({ serviceCode: "FW_GOODS-1961214" }),
+    });
+    assert.equal(denied.status, 409);
+    const allowed = await fetch(`${baseUrl}/v1/services/launch`, {
+      method: "POST",
+      headers: { authorization: "Bearer test-token", "content-type": "application/json" },
+      body: JSON.stringify({ serviceCode: "FW_GOODS-1961214", confirm: true }),
+    });
+    assert.equal(allowed.status, 200);
+    assert.deepEqual(await allowed.json(), {
+      serviceCode: "FW_GOODS-1961214",
+      status: "authorization_required",
+    });
+  }, gateway);
+});
+
+test("raw operation HTTP endpoint is not exposed", async () => {
+  await withServer(async (baseUrl) => {
+    const response = await fetch(`${baseUrl}/v1/operations/call`, {
+      method: "POST",
+      headers: { authorization: "Bearer test-token", "content-type": "application/json" },
+      body: JSON.stringify({
+        operation: "service.auth-code",
+        payload: { request: { code: "secret" } },
+        confirm: true,
+      }),
+    });
+    assert.equal(response.status, 404);
+  });
+});
+
 test("typed workflow endpoint forwards input only with confirmation", async () => {
   let received;
   const gateway = new AiSpaceGateway({

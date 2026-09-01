@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.0 - 2026-09-01
+
+- Add confirmed, entitlement-gated launch-context preparation for already active AI Market services.
+- Return only endpoint origins and query-key names; signed launch parameters and account-specific messages remain private.
+- Stop before ordering or micro-app authorization and keep both actions outside the adapter.
+- Remove the raw DSM-operation HTTP endpoint to prevent accidental credential-bearing responses.
+
 ## 0.4.0 - 2026-09-01
 
 - Resolve all 18 third-party baseline tools to exact public 京麦服务市场 service codes.

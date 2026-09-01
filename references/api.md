@@ -12,6 +12,19 @@ All endpoints bind to `127.0.0.1` by default. When `AISPACE_GATEWAY_TOKEN` is se
 - `POST /v1/services/resolve`: body `{ "serviceCode": "..." }`.
 - `POST /v1/workflows/inspect`: body `{ "serviceCode": "..." }`.
 
+## Service Launch Preflight
+
+`POST /v1/services/launch` prepares the official AI Market launch context only after the service-access check reports it active. It requires:
+
+```json
+{
+  "serviceCode": "FW_GOODS-1961214",
+  "confirm": true
+}
+```
+
+The response reports `launch_ready` or `authorization_required` and includes only endpoint origins and query-key names. It never returns the signed launch URL, callback URL, auth code, state value, or account-specific message. It never calls ordering or authorization APIs. A successful launch preflight does not prove that the vendor's own input and result protocol is supported.
+
 ## Product Detail Inspection
 
 `POST /v1/workflows/product-detail-inspection`
