@@ -2,6 +2,13 @@ import { GatewayError } from "../errors.mjs";
 import { OPERATIONS } from "../operations.mjs";
 
 const HOSTING_TYPES = Object.freeze({ material: 1, "comment-reply": 3 });
+const COMMENT_TASK_STATUSES = Object.freeze({
+  0: "not_hosting",
+  1: "creating",
+  2: "failed",
+  3: "hosting",
+  4: "stopped",
+});
 
 function operationRequest(name, payload) {
   const operation = OPERATIONS[name];
@@ -30,6 +37,14 @@ function safeCommentTemplate(item = {}) {
   };
 }
 
+function safeStyle(item = {}) {
+  return {
+    id: item.id == null ? null : Number(item.id),
+    name: item.name || "",
+    default: String(item.isDefaultShow ?? "0") === "1",
+  };
+}
+
 export class HostingAdapter {
   constructor({ client }) {
     if (!client) throw new Error("client is required");
@@ -44,12 +59,11 @@ export class HostingAdapter {
         status: 400,
       });
     }
-    const operation = OPERATIONS["hosting.manage-page"];
     const result = await this.client.call(operationRequest("hosting.manage-page", { param: { manageType } }));
     const data = result.data || {};
     const template = data.manageTemplateResult || {};
     const current = data.manageJobResult;
-    return {
+    const response = {
       type,
       manageType,
       canOpenManage: Number(data.canOpenManage ?? template.canOpenManage ?? 0),
@@ -72,6 +86,38 @@ export class HostingAdapter {
           : [],
       },
       traceId: result.traceId || null,
+    };
+    if (type !== "comment-reply") return response;
+
+    const [statusResult, enabledResult, protocolResult, stylesResult] = await Promise.all([
+      this.client.call(operationRequest("hosting.comment.status", {
+        hostStatusRequest: { hostScene: 1 },
+      })),
+      this.client.call(operationRequest("hosting.comment.protocol-enabled", {
+        protocolRequest: {},
+      })),
+      this.client.call(operationRequest("hosting.comment.protocol", {
+        protocolRequest: {},
+      })),
+      this.client.call(operationRequest("hosting.comment.reply-styles", {})),
+    ]);
+    const commentStatus = statusResult.data || {};
+    const styles = stylesResult.data || {};
+    return {
+      ...response,
+      status: COMMENT_TASK_STATUSES[Number(commentStatus.taskStatus)] || "unknown",
+      comment: {
+        taskStatus: commentStatus.taskStatus == null ? null : Number(commentStatus.taskStatus),
+        fullHostingStatus: commentStatus.fullHostingStatus ?? null,
+        pullProductStatus: commentStatus.pullProductStatus ?? null,
+        agreement: {
+          enabled: Number(enabledResult.data) === 1,
+          id: protocolResult.data?.id == null ? null : String(protocolResult.data.id),
+          url: protocolResult.data?.url || "",
+        },
+        replyTunes: Array.isArray(styles.replyTuneList) ? styles.replyTuneList.map(safeStyle) : [],
+        textLengths: Array.isArray(styles.textLengthList) ? styles.textLengthList.map(safeStyle) : [],
+      },
     };
   }
 }

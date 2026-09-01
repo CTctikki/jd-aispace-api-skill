@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1 - 2026-09-01
+
+- Enrich AI 评价回复托管 inspection with its dedicated status, agreement, reply-tone, and text-length APIs.
+
 ## 0.2.0 - 2026-09-01
 
 - Add typed 商详主图 AI 巡检 and 商品主图批量下载 execution.

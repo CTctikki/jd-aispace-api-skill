@@ -103,6 +103,26 @@ export const OPERATIONS = Object.freeze({
     api: "dsm.ware.manage.job.queryManagePageInfo",
     effect: "read",
   },
+  "hosting.comment.status": {
+    appId: APP_IDS.hosting,
+    api: "dsm.support.hosting.CommentsHostingFacadeService.getHostStatus",
+    effect: "read",
+  },
+  "hosting.comment.protocol-enabled": {
+    appId: APP_IDS.hosting,
+    api: "dsm.support.hosting.CommentsHostingFacadeService.hostProtocolEnabled",
+    effect: "read",
+  },
+  "hosting.comment.protocol": {
+    appId: APP_IDS.hosting,
+    api: "dsm.support.hosting.CommentsHostingFacadeService.getHostProtocol",
+    effect: "read",
+  },
+  "hosting.comment.reply-styles": {
+    appId: APP_IDS.hosting,
+    api: "dsm.support.hosting.CommentsHostingFacadeService.replyStyleDefaultList",
+    effect: "read",
+  },
   "activity-signup.schema": {
     appId: APP_IDS.activitySignup,
     api: "dsm.oxygenflow.purchase.task.queryappDetail",

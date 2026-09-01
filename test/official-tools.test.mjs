@@ -26,6 +26,44 @@ test("hosting rejects unknown types", async () => {
   await assert.rejects(() => adapter.inspect("unknown"), { code: "INVALID_HOSTING_TYPE" });
 });
 
+test("comment hosting inspection returns verified status, agreement, and styles", async () => {
+  const calls = [];
+  const client = { async call(request) {
+    calls.push(request.api);
+    switch (request.api) {
+      case "dsm.ware.manage.job.queryManagePageInfo":
+        assert.deepEqual(request.payload, { param: { manageType: 3 } });
+        return { data: { manageTemplateResult: {}, manageCommentTemplateResults: [] } };
+      case "dsm.support.hosting.CommentsHostingFacadeService.getHostStatus":
+        assert.deepEqual(request.payload, { hostStatusRequest: { hostScene: 1 } });
+        return { data: { taskStatus: 0, taskId: "private", pullProductStatus: 1 } };
+      case "dsm.support.hosting.CommentsHostingFacadeService.hostProtocolEnabled":
+        assert.deepEqual(request.payload, { protocolRequest: {} });
+        return { data: 1 };
+      case "dsm.support.hosting.CommentsHostingFacadeService.getHostProtocol":
+        return { data: { id: 1, url: "https://storage.jd.com/protocol.pdf" } };
+      case "dsm.support.hosting.CommentsHostingFacadeService.replyStyleDefaultList":
+        return { data: {
+          replyTuneList: [{ id: 1, name: "智能", isDefaultShow: "1", privateField: "hidden" }],
+          textLengthList: [{ id: 2, name: "丰富", isDefaultShow: "0" }],
+        } };
+      default:
+        throw new Error(`Unexpected API: ${request.api}`);
+    }
+  } };
+  const result = await new HostingAdapter({ client }).inspect("comment-reply");
+  assert.equal(result.status, "not_hosting");
+  assert.deepEqual(result.comment.agreement, {
+    enabled: true,
+    id: "1",
+    url: "https://storage.jd.com/protocol.pdf",
+  });
+  assert.deepEqual(result.comment.replyTunes, [{ id: 1, name: "智能", default: true }]);
+  assert.deepEqual(result.comment.textLengths, [{ id: 2, name: "丰富", default: false }]);
+  assert.equal(JSON.stringify(result).includes("private"), false);
+  assert.equal(calls.length, 5);
+});
+
 test("activity signup schema parses the fixed official app", async () => {
   const client = { async call(request) {
     assert.equal(request.payload.request.appId, ACTIVITY_SIGNUP_APP_ID);
