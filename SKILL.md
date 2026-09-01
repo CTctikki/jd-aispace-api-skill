@@ -1,6 +1,6 @@
 ---
 name: jd-aispace-api-skill
-description: Use when a JD/Jingmai merchant wants to discover, inspect, execute, or maintain AI经营中心/AISpace tools through a local API gateway without foreground browser automation, including 商详信息AI全巡检 and workflow result retrieval. Do not use for consumer-side JD shopping or generic browser clicking.
+description: Use when a JD/Jingmai merchant wants to discover, inspect, execute, or maintain AI经营中心/AISpace tools through a local API gateway without foreground browser automation, including 商品信息巡检、主图巡检、主图下载、AI商机情报 and workflow result retrieval. Do not use for consumer-side JD shopping or generic browser clicking.
 ---
 
 # JD AISpace API
@@ -12,6 +12,11 @@ Use the bundled local gateway instead of clicking through the merchant UI. Keep 
 - List current tools with `GET /v1/services?refresh=true`.
 - Inspect an allowlisted workflow with `POST /v1/workflows/inspect`.
 - Run 商详信息 AI 全巡检 with `POST /v1/workflows/product-detail-inspection`.
+- Run 商详主图 AI 巡检 with `POST /v1/workflows/main-image-inspection`.
+- Run 商品主图批量下载 with `POST /v1/workflows/image-download`.
+- Ask AI 商机情报 with `POST /v1/business-opportunity/ask`.
+- Inspect 商品信息/评价回复托管 with `GET /v1/hosting/material` or `GET /v1/hosting/comment-reply`.
+- Inspect 批量报名预约活动 input requirements with `GET /v1/activity-signup/schema`.
 - Read an existing run with `POST /v1/workflows/result`.
 - Use generic `POST /v1/workflows/run` only when its protocol is verified.
 - Read `references/api.md` for payloads and response fields.
@@ -32,6 +37,7 @@ Use the bundled local gateway instead of clicking through the merchant UI. Keep 
 - Never invoke `zeroOrFreePurchaseOrder` automatically.
 - If the profile is locked, ask for a stopped or dedicated profile instead of taking over the visible browser.
 - If a tool lacks a verified adapter, report metadata only. Do not guess hidden fields or claim it is executable.
+- Do not execute 主推商品 AI 打标、托管启停或活动报名 until the user explicitly authorizes the specific write and its live protocol has been validated.
 
 ## Handle Long Runs
 

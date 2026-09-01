@@ -2,6 +2,9 @@ export const APP_IDS = Object.freeze({
   portal: "YLUC0MIUG39LNW6RQZBN",
   market: "RHF4TRSNMOTM9W9O3UKH",
   workflow: "FYIFKQ8BWEEXWLBKKTRO",
+  businessOpportunity: "ANND8ARAD7MBSWZRBUKF",
+  hosting: "YYGSNPYN2EN5LVUEWU4Y",
+  activitySignup: "SNGJYIAOIPI9IV8LHSLL",
 });
 
 export const OPERATIONS = Object.freeze({
@@ -78,6 +81,31 @@ export const OPERATIONS = Object.freeze({
   "workflow.version": {
     appId: APP_IDS.workflow,
     api: "dsm.workflow.specialist.runtimeQueryService.getWorkflowVersion",
+    effect: "read",
+  },
+  "business-opportunity.questions": {
+    appId: APP_IDS.businessOpportunity,
+    api: "dsm.grow.shop.api.opportunityAgentService.getQuestions",
+    effect: "read",
+  },
+  "business-opportunity.session.create": {
+    appId: APP_IDS.businessOpportunity,
+    api: "dsm.grow.shop.api.opportunityAgentService.createSession",
+    effect: "execute",
+  },
+  "business-opportunity.chat": {
+    appId: APP_IDS.businessOpportunity,
+    api: "dsm.grow.ai.opportunity.chat",
+    effect: "execute",
+  },
+  "hosting.manage-page": {
+    appId: APP_IDS.hosting,
+    api: "dsm.ware.manage.job.queryManagePageInfo",
+    effect: "read",
+  },
+  "activity-signup.schema": {
+    appId: APP_IDS.activitySignup,
+    api: "dsm.oxygenflow.purchase.task.queryappDetail",
     effect: "read",
   },
 });

@@ -65,6 +65,36 @@ test("typed workflow endpoint forwards input only with confirmation", async () =
   }, gateway);
 });
 
+test("typed product workflow endpoints require confirmation", async () => {
+  const received = [];
+  const workflowAdapter = {
+    async runMainImageInspection(input) { received.push(["main-image", input]); return { status: "completed" }; },
+    async runImageDownload(input) { received.push(["image-download", input]); return { status: "completed" }; },
+  };
+  const gateway = new AiSpaceGateway({ client: {}, workflowAdapter });
+  await withServer(async (baseUrl) => {
+    const endpoints = [
+      ["main-image-inspection", { skuIds: ["123"], inspectElements: ["京喜自营"] }],
+      ["image-download", { skuIds: ["123"], squareImageIndexes: [1] }],
+    ];
+    for (const [endpoint, input] of endpoints) {
+      const denied = await fetch(`${baseUrl}/v1/workflows/${endpoint}`, {
+        method: "POST",
+        headers: { authorization: "Bearer test-token", "content-type": "application/json" },
+        body: JSON.stringify({ input }),
+      });
+      assert.equal(denied.status, 409);
+      const allowed = await fetch(`${baseUrl}/v1/workflows/${endpoint}`, {
+        method: "POST",
+        headers: { authorization: "Bearer test-token", "content-type": "application/json" },
+        body: JSON.stringify({ confirm: true, input }),
+      });
+      assert.equal(allowed.status, 200);
+    }
+  }, gateway);
+  assert.deepEqual(received.map(([name]) => name), ["main-image", "image-download"]);
+});
+
 test("workflow result endpoint is read-only", async () => {
   let received;
   const gateway = new AiSpaceGateway({
@@ -90,5 +120,55 @@ test("workflow result endpoint is read-only", async () => {
       serviceCode: "FW_GOODS-1968206",
       input: { threadId: "t1", runId: "r1" },
     });
+  }, gateway);
+});
+
+test("business opportunity endpoints separate reads from confirmed execution", async () => {
+  const received = [];
+  const gateway = new AiSpaceGateway({
+    client: {},
+    businessOpportunityAdapter: {
+      async listQuestions() { return { questions: ["问题"] }; },
+      async ask(input) { received.push(input); return { status: "completed", answer: "结果" }; },
+      async readTrace(input) { return { status: "completed", traceId: input.traceId }; },
+    },
+  });
+  await withServer(async (baseUrl) => {
+    const headers = { authorization: "Bearer test-token", "content-type": "application/json" };
+    const questions = await fetch(`${baseUrl}/v1/business-opportunity/questions`, { headers });
+    assert.equal(questions.status, 200);
+    const denied = await fetch(`${baseUrl}/v1/business-opportunity/ask`, {
+      method: "POST", headers, body: JSON.stringify({ input: { query: "问题" } }),
+    });
+    assert.equal(denied.status, 409);
+    const allowed = await fetch(`${baseUrl}/v1/business-opportunity/ask`, {
+      method: "POST", headers, body: JSON.stringify({ confirm: true, input: { query: "问题" } }),
+    });
+    assert.equal(allowed.status, 200);
+    const replay = await fetch(`${baseUrl}/v1/business-opportunity/result`, {
+      method: "POST", headers, body: JSON.stringify({ input: { traceId: "t", groupId: "g" } }),
+    });
+    assert.equal(replay.status, 200);
+  }, gateway);
+  assert.deepEqual(received, [{ query: "问题" }]);
+});
+
+test("hosting and activity schema endpoints are read-only", async () => {
+  const gateway = new AiSpaceGateway({
+    client: {},
+    hostingAdapter: { async inspect(type) { return { type }; } },
+    activitySignupAdapter: { async inspect() { return { appName: "批量预约活动报名" }; } },
+  });
+  await withServer(async (baseUrl) => {
+    const headers = { authorization: "Bearer test-token" };
+    const material = await fetch(`${baseUrl}/v1/hosting/material`, { headers });
+    assert.equal(material.status, 200);
+    assert.equal((await material.json()).type, "material");
+    const comment = await fetch(`${baseUrl}/v1/hosting/comment-reply`, { headers });
+    assert.equal(comment.status, 200);
+    assert.equal((await comment.json()).type, "comment-reply");
+    const activity = await fetch(`${baseUrl}/v1/activity-signup/schema`, { headers });
+    assert.equal(activity.status, 200);
+    assert.equal((await activity.json()).appName, "批量预约活动报名");
   }, gateway);
 });

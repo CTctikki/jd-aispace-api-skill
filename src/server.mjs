@@ -89,10 +89,52 @@ export function createServer({ gateway, token = "" }) {
         );
         return sendJson(response, 200, result);
       }
+      if (request.method === "POST" && url.pathname === "/v1/workflows/main-image-inspection") {
+        const body = await readJson(request);
+        const result = await gateway.runMainImageInspection(
+          body.input || {},
+          { confirm: body.confirm === true },
+        );
+        return sendJson(response, 200, result);
+      }
+      if (request.method === "POST" && url.pathname === "/v1/workflows/image-download") {
+        const body = await readJson(request);
+        const result = await gateway.runImageDownload(
+          body.input || {},
+          { confirm: body.confirm === true },
+        );
+        return sendJson(response, 200, result);
+      }
       if (request.method === "POST" && url.pathname === "/v1/workflows/result") {
         const body = await readJson(request);
         const result = await gateway.readWorkflowRun(body.serviceCode, body.input || {});
         return sendJson(response, 200, result);
+      }
+      if (request.method === "GET" && url.pathname === "/v1/business-opportunity/questions") {
+        const result = await gateway.listBusinessOpportunityQuestions();
+        return sendJson(response, 200, result);
+      }
+      if (request.method === "POST" && url.pathname === "/v1/business-opportunity/ask") {
+        const body = await readJson(request);
+        const result = await gateway.askBusinessOpportunity(
+          body.input || {},
+          { confirm: body.confirm === true },
+        );
+        return sendJson(response, 200, result);
+      }
+      if (request.method === "POST" && url.pathname === "/v1/business-opportunity/result") {
+        const body = await readJson(request);
+        const result = await gateway.readBusinessOpportunityTrace(body.input || {});
+        return sendJson(response, 200, result);
+      }
+      if (request.method === "GET" && url.pathname === "/v1/hosting/material") {
+        return sendJson(response, 200, await gateway.inspectHosting("material"));
+      }
+      if (request.method === "GET" && url.pathname === "/v1/hosting/comment-reply") {
+        return sendJson(response, 200, await gateway.inspectHosting("comment-reply"));
+      }
+      if (request.method === "GET" && url.pathname === "/v1/activity-signup/schema") {
+        return sendJson(response, 200, await gateway.inspectActivitySignup());
       }
       return sendJson(response, 404, { error: { code: "NOT_FOUND" } });
     } catch (error) {

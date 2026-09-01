@@ -81,11 +81,7 @@ function unzipEntries(buffer) {
 }
 
 export function parseInspectionWorkbook(buffer) {
-  const entries = unzipEntries(buffer);
-  const worksheet = entries.get("xl/worksheets/sheet1.xml")?.toString("utf8");
-  if (!worksheet) throw new Error("Inspection report has no first worksheet");
-  const sharedStrings = entries.get("xl/sharedStrings.xml")?.toString("utf8") || "";
-  const [headers = [], ...rows] = parseWorksheetXml(sharedStrings, worksheet);
+  const [headers, rows] = parseFirstWorksheet(buffer);
   const resultColumn = headers.findIndex((header) => String(header).endsWith("元素有无"));
   if (resultColumn < 0) throw new Error("Inspection result column is missing");
   return rows.filter((row) => row.some((value) => value !== "")).map((row) => ({
@@ -97,15 +93,97 @@ export function parseInspectionWorkbook(buffer) {
   }));
 }
 
-export async function fetchInspectionReport(url, fetchImpl = globalThis.fetch) {
+function parseFirstWorksheet(buffer) {
+  const entries = unzipEntries(buffer);
+  const worksheet = entries.get("xl/worksheets/sheet1.xml")?.toString("utf8");
+  if (!worksheet) throw new Error("Workflow report has no first worksheet");
+  const sharedStrings = entries.get("xl/sharedStrings.xml")?.toString("utf8") || "";
+  const [headers = [], ...rows] = parseWorksheetXml(sharedStrings, worksheet);
+  return [headers.map(String), rows.filter((row) => row.some((value) => value !== ""))];
+}
+
+function requiredColumn(headers, name) {
+  const index = headers.indexOf(name);
+  if (index < 0) throw new Error(`Workflow report column is missing: ${name}`);
+  return index;
+}
+
+export function parseMainImageInspectionRows(headers, rows) {
+  const skuColumn = requiredColumn(headers, "商品编号");
+  const terminalColumn = requiredColumn(headers, "端");
+  const urlColumn = requiredColumn(headers, "主图url");
+  const indexColumn = requiredColumn(headers, "主图第几张");
+  const checkColumns = headers.map((header, index) => ({ header, index }))
+    .filter(({ header }) => header.startsWith("主图含") && header.length > 3);
+  if (checkColumns.length === 0) throw new Error("Main image inspection result columns are missing");
+  return rows.map((row) => ({
+    skuId: String(row[skuColumn] ?? ""),
+    terminal: String(row[terminalColumn] ?? ""),
+    imageUrl: String(row[urlColumn] ?? ""),
+    imageIndex: Number.parseInt(String(row[indexColumn] ?? "").match(/\d+/)?.[0] || "0", 10),
+    checks: Object.fromEntries(checkColumns.map(({ header, index }) => [
+      header.slice(3),
+      String(row[index] ?? "") === "是",
+    ])),
+  }));
+}
+
+export function parseImageDownloadRows(headers, rows) {
+  const skuColumn = requiredColumn(headers, "SKUID");
+  const typeColumn = requiredColumn(headers, "图片比例");
+  const resultColumn = requiredColumn(headers, "下载结果");
+  const imageColumns = headers.map((header, index) => ({ header, index }))
+    .filter(({ header, index }) => index > typeColumn && index < resultColumn && /^第\d+帧$/.test(header));
+  return rows.map((row) => {
+    const result = String(row[resultColumn] ?? "");
+    return {
+      skuId: String(row[skuColumn] ?? ""),
+      imageType: String(row[typeColumn] ?? ""),
+      images: imageColumns.map(({ header, index }) => ({
+        index: Number.parseInt(header.match(/\d+/)[0], 10),
+        url: String(row[index] ?? ""),
+      })).filter(({ url }) => url.length > 0),
+      success: result === "成功",
+      result,
+    };
+  });
+}
+
+export function parseMainImageInspectionWorkbook(buffer) {
+  const [headers, rows] = parseFirstWorksheet(buffer);
+  return parseMainImageInspectionRows(headers, rows);
+}
+
+export function parseImageDownloadWorkbook(buffer) {
+  const [headers, rows] = parseFirstWorksheet(buffer);
+  return parseImageDownloadRows(headers, rows);
+}
+
+export async function fetchWorkflowReport(url, parser, fetchImpl = globalThis.fetch) {
   const normalizedUrl = String(url).startsWith("//") ? `https:${url}` : String(url);
   const parsedUrl = new URL(normalizedUrl);
-  if (!new Set(["storage.jd.com", "storage.360buyimg.com"]).has(parsedUrl.hostname)) {
-    throw new Error("Inspection report host is not allowed");
+  if (parsedUrl.protocol !== "https:" || !new Set([
+    "storage.jd.com",
+    "storage.360buyimg.com",
+    "s3-chubaofs-internal.jd.com",
+  ]).has(parsedUrl.hostname)) {
+    throw new Error("Workflow report host is not allowed");
   }
   const response = await fetchImpl(parsedUrl);
   if (!response.ok) throw new Error(`Inspection report returned HTTP ${response.status}`);
   const buffer = Buffer.from(await response.arrayBuffer());
   if (buffer.length > MAX_REPORT_BYTES) throw new Error("Inspection report is too large");
-  return { url: normalizedUrl, rows: parseInspectionWorkbook(buffer) };
+  return { url: normalizedUrl, rows: parser(buffer) };
+}
+
+export function fetchInspectionReport(url, fetchImpl = globalThis.fetch) {
+  return fetchWorkflowReport(url, parseInspectionWorkbook, fetchImpl);
+}
+
+export function fetchMainImageInspectionReport(url, fetchImpl = globalThis.fetch) {
+  return fetchWorkflowReport(url, parseMainImageInspectionWorkbook, fetchImpl);
+}
+
+export function fetchImageDownloadReport(url, fetchImpl = globalThis.fetch) {
+  return fetchWorkflowReport(url, parseImageDownloadWorkbook, fetchImpl);
 }

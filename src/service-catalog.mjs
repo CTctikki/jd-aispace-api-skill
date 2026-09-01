@@ -1,7 +1,7 @@
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { APP_IDS, OPERATIONS } from "./operations.mjs";
-import { TOOL_REGISTRY } from "./tool-registry.mjs";
+import { ADAPTER_STATUS_BY_SERVICE, TOOL_REGISTRY } from "./tool-registry.mjs";
 import { WORKFLOW_TOOLS } from "./adapters/workflow-tools.mjs";
 
 const CATEGORY_NAMES = Object.freeze({
@@ -151,11 +151,11 @@ export class ServiceCatalog {
         publisher: normalizePublisher(service, tool.publisher),
         paradigm,
         executionMode: workflowSupported ? "workflow_stream" : executionMode(paradigm),
-        adapterStatus: workflowSupported
+        adapterStatus: ADAPTER_STATUS_BY_SERVICE[serviceCode] || (workflowSupported
           ? "workflow_inspection_ready"
           : serviceCode
             ? "metadata_resolved"
-            : "service_code_missing",
+            : "service_code_missing"),
         launch: {
           type: portalTool.type || null,
           url: portalTool.url || null,

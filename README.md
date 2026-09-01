@@ -12,7 +12,14 @@
 | 已识别 6 类、26 个工具的基础目录 | 已支持 |
 | 4 个官方商品工作流元数据与 AG-UI 流协议 | 已支持 |
 | 商详信息 AI 全巡检自动启动、提交、结果重放 | 已支持 |
-| 巡检 Excel 下载及安全字段结构化 | 已支持 |
+| 商详主图 AI 巡检自动执行与报告解析 | 已支持 |
+| 商品主图批量下载与图片链接提取 | 已支持 |
+| AI 商机情报问答与流式结果汇总 | 已支持 |
+| AI 商品信息托管、AI 评价回复托管配置查询 | 已支持（只读） |
+| 批量报名预约活动模板与参数查询 | 已支持（只读） |
+| 主推商品 AI 打标 | 参数协议已适配，待商家授权真实写操作验证 |
+| 托管启停、活动报名提交 | 待商家明确授权及真实数据验证 |
+| 其余 18 个第三方工具 | 当前账号未返回服务代码或启动入口，暂不可直接调用 |
 | 未验证工具的自动执行 | 不支持，避免猜测参数 |
 
 ## 安装为 Codex Skill
@@ -27,7 +34,7 @@ npm test
 之后可直接向 Codex 提出：
 
 ```text
-使用 $jd-aispace-api-skill，通过我的京麦登录态执行商详信息 AI 全巡检，检查指定 SKU 的“7天无理由退货”。
+使用 $jd-aispace-api-skill，通过我的京麦登录态执行商详主图 AI 巡检，检查指定 SKU 的第一张 APP 主图是否含“京喜自营”。
 ```
 
 ## 启动网关
@@ -43,7 +50,7 @@ npm start
 
 网关默认监听 `http://127.0.0.1:17321`。请勿把 Cookie、令牌或本机用户目录提交到仓库。
 
-## 调用全巡检
+## 调用示例
 
 ```powershell
 $headers = @{ Authorization = "Bearer $env:AISPACE_GATEWAY_TOKEN" }
@@ -62,7 +69,14 @@ Invoke-RestMethod http://127.0.0.1:17321/v1/workflows/product-detail-inspection 
   -Method Post -Headers $headers -ContentType application/json -Body $body
 ```
 
-返回包含任务状态、文字摘要、结构化巡检行和原始 Excel 地址。完整接口见 [`references/api.md`](references/api.md)。
+其他已验证的一键接口：
+
+- `POST /v1/workflows/main-image-inspection`
+- `POST /v1/workflows/image-download`
+- `POST /v1/business-opportunity/ask`
+- `POST /v1/workflows/result`（只读结果回放）
+
+托管配置和活动模板可分别通过 `GET /v1/hosting/:type` 与 `GET /v1/activity-signup/schema` 查询。完整接口见 [`references/api.md`](references/api.md)。
 
 ## 跟踪 AISpace 更新
 
@@ -75,6 +89,7 @@ Invoke-RestMethod http://127.0.0.1:17321/v1/workflows/product-detail-inspection 
 - 登录 Cookie 仅在内存中按域名短期缓存，不写入结果或日志。
 - 公开响应会移除身份与认证字段。
 - 报告解析只保留 SKU、终端、巡检位置和命中结果。
+- 持续托管、商品打标和活动报名等写操作在真实验证前不会标记为可用。
 
 ## 开发
 

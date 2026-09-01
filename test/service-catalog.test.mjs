@@ -32,6 +32,11 @@ test("catalog uses required portal request", async () => {
   const tool = result.tools.find((entry) => entry.serviceCode === "FW_GOODS-1970202");
   assert.equal(tool.paradigm, "FLOW");
   assert.equal(tool.executionMode, "workflow_stream");
+  assert.equal(tool.adapterStatus, "one_click_ready");
+  assert.equal(
+    result.tools.find((entry) => entry.serviceCode === "FW_GOODS-1970807").adapterStatus,
+    "confirmation_validation_required",
+  );
   assert.equal(result.summary.withServiceCode, 8);
 });
 

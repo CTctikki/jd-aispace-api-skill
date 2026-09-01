@@ -27,13 +27,26 @@ const tools = [
   ["客户服务", "晓多AI训练场", "third_party"],
 ];
 
+export const ADAPTER_STATUS_BY_SERVICE = Object.freeze({
+  "FW_GOODS-1968206": "one_click_ready",
+  "FW_GOODS-1969405": "one_click_ready",
+  "FW_GOODS-1970202": "one_click_ready",
+  "FW_GOODS-1970807": "confirmation_validation_required",
+  "FW_GOODS-1968001": "one_click_ready",
+  "FW_GOODS-1968201": "read_only_ready",
+  "FW_GOODS-1967204": "read_only_ready",
+  "FW_GOODS-1968204": "schema_ready",
+});
+
 export const TOOL_REGISTRY = Object.freeze(tools.map(([category, name, publisher, serviceCode = null], index) => Object.freeze({
   id: index + 1,
   category,
   name,
   publisher,
   serviceCode,
-  adapterStatus: serviceCode ? "service_resolvable" : "discovery_required",
+  adapterStatus: serviceCode
+    ? ADAPTER_STATUS_BY_SERVICE[serviceCode] || "service_resolvable"
+    : "discovery_required",
 })));
 
 export function summarizeTools() {

@@ -3,10 +3,20 @@ import { OPERATIONS } from "./operations.mjs";
 import { TOOL_REGISTRY, summarizeTools } from "./tool-registry.mjs";
 
 export class AiSpaceGateway {
-  constructor({ client, catalog = null, workflowAdapter = null }) {
+  constructor({
+    client,
+    catalog = null,
+    workflowAdapter = null,
+    businessOpportunityAdapter = null,
+    hostingAdapter = null,
+    activitySignupAdapter = null,
+  }) {
     this.client = client;
     this.catalog = catalog;
     this.workflowAdapter = workflowAdapter;
+    this.businessOpportunityAdapter = businessOpportunityAdapter;
+    this.hostingAdapter = hostingAdapter;
+    this.activitySignupAdapter = activitySignupAdapter;
   }
 
   getRegistry() {
@@ -52,9 +62,47 @@ export class AiSpaceGateway {
     return this.workflowAdapter.runProductDetailInspection(input);
   }
 
+  async runMainImageInspection(input, { confirm = false } = {}) {
+    if (!confirm) throw new ConfirmationRequiredError("workflow.main-image-inspection");
+    if (this.workflowAdapter === null) throw new Error("workflow adapter is not configured");
+    return this.workflowAdapter.runMainImageInspection(input);
+  }
+
+  async runImageDownload(input, { confirm = false } = {}) {
+    if (!confirm) throw new ConfirmationRequiredError("workflow.image-download");
+    if (this.workflowAdapter === null) throw new Error("workflow adapter is not configured");
+    return this.workflowAdapter.runImageDownload(input);
+  }
+
   readWorkflowRun(serviceCode, input) {
     if (this.workflowAdapter === null) throw new Error("workflow adapter is not configured");
     return this.workflowAdapter.readRun(serviceCode, input);
+  }
+
+  listBusinessOpportunityQuestions() {
+    if (this.businessOpportunityAdapter === null) throw new Error("business opportunity adapter is not configured");
+    return this.businessOpportunityAdapter.listQuestions();
+  }
+
+  async askBusinessOpportunity(input, { confirm = false } = {}) {
+    if (!confirm) throw new ConfirmationRequiredError("business-opportunity.ask");
+    if (this.businessOpportunityAdapter === null) throw new Error("business opportunity adapter is not configured");
+    return this.businessOpportunityAdapter.ask(input);
+  }
+
+  readBusinessOpportunityTrace(input) {
+    if (this.businessOpportunityAdapter === null) throw new Error("business opportunity adapter is not configured");
+    return this.businessOpportunityAdapter.readTrace(input);
+  }
+
+  inspectHosting(type) {
+    if (this.hostingAdapter === null) throw new Error("hosting adapter is not configured");
+    return this.hostingAdapter.inspect(type);
+  }
+
+  inspectActivitySignup() {
+    if (this.activitySignupAdapter === null) throw new Error("activity signup adapter is not configured");
+    return this.activitySignupAdapter.inspect();
   }
 
   prepareServiceLaunch(serviceCode, { confirm = false } = {}) {

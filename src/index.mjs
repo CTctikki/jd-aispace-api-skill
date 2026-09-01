@@ -4,6 +4,9 @@ import { createServer } from "./server.mjs";
 import { SffClient } from "./sff-client.mjs";
 import { ServiceCatalog } from "./service-catalog.mjs";
 import { WorkflowToolAdapter } from "./adapters/workflow-tools.mjs";
+import { BusinessOpportunityAdapter } from "./adapters/business-opportunity.mjs";
+import { ActivitySignupAdapter } from "./adapters/activity-signup.mjs";
+import { HostingAdapter } from "./adapters/hosting.mjs";
 import { DirectHttpTransport } from "./transports/direct-http.mjs";
 import { HttpBridgeTransport } from "./transports/http-bridge.mjs";
 import { ChromeProfileTransport } from "./transports/chrome-profile.mjs";
@@ -27,6 +30,9 @@ const gateway = new AiSpaceGateway({
     cacheTtlMs: config.catalogTtlMs,
   }),
   workflowAdapter: new WorkflowToolAdapter({ client, transport }),
+  businessOpportunityAdapter: new BusinessOpportunityAdapter({ client, transport }),
+  hostingAdapter: new HostingAdapter({ client }),
+  activitySignupAdapter: new ActivitySignupAdapter({ client }),
 });
 const server = createServer({ gateway, token: config.token });
 

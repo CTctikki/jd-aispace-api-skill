@@ -5,13 +5,30 @@ import {
   normalizeWorkflowEvents,
   PRODUCT_DETAIL_INSPECTION_SERVICE,
 } from "./product-detail-inspection.mjs";
-import { fetchInspectionReport } from "./xlsx-report.mjs";
+import {
+  buildImageDownloadFeedback,
+  buildMainImageInspectionFeedback,
+  IMAGE_DOWNLOAD_SERVICE,
+  MAIN_IMAGE_INSPECTION_SERVICE,
+  MAIN_RECOMMENDATION_LABEL_SERVICE,
+} from "./product-workflows.mjs";
+import {
+  fetchImageDownloadReport,
+  fetchInspectionReport,
+  fetchMainImageInspectionReport,
+} from "./xlsx-report.mjs";
 
 export const WORKFLOW_TOOLS = Object.freeze({
-  "FW_GOODS-1969405": Object.freeze({ route: "mainImage-inspection", bizCode: "CODE402" }),
-  "FW_GOODS-1970202": Object.freeze({ route: "image-download", bizCode: "CODE403" }),
-  "FW_GOODS-1968206": Object.freeze({ route: "product-detail-inspection", bizCode: "CODE404" }),
-  "FW_GOODS-1970807": Object.freeze({ route: "main-recommendation-label", bizCode: "CODE501" }),
+  [MAIN_IMAGE_INSPECTION_SERVICE]: Object.freeze({ route: "main-image-inspection", bizCode: "CODE402", inputCardId: "402" }),
+  [IMAGE_DOWNLOAD_SERVICE]: Object.freeze({ route: "image-download", bizCode: "CODE403", inputCardId: "403" }),
+  [PRODUCT_DETAIL_INSPECTION_SERVICE]: Object.freeze({ route: "product-detail-inspection", bizCode: "CODE404", inputCardId: "405" }),
+  [MAIN_RECOMMENDATION_LABEL_SERVICE]: Object.freeze({ route: "main-recommendation-label", bizCode: "CODE501", inputCardId: "404" }),
+});
+
+const REPORT_HANDLERS = Object.freeze({
+  [PRODUCT_DETAIL_INSPECTION_SERVICE]: Object.freeze({ rowsKey: "inspectionRows", fetch: fetchInspectionReport }),
+  [MAIN_IMAGE_INSPECTION_SERVICE]: Object.freeze({ rowsKey: "mainImageRows", fetch: fetchMainImageInspectionReport }),
+  [IMAGE_DOWNLOAD_SERVICE]: Object.freeze({ rowsKey: "downloadRows", fetch: fetchImageDownloadReport }),
 });
 
 function operationRequest(name, payload) {
@@ -245,68 +262,99 @@ export class WorkflowToolAdapter {
       runId: input.runId,
       timeoutMs: input.timeoutMs,
     });
-    return serviceCode === PRODUCT_DETAIL_INSPECTION_SERVICE
-      ? this.addInspectionReport(result)
-      : result;
+    return this.addWorkflowReport(serviceCode, result);
   }
 
-  async addInspectionReport(result) {
+  async addWorkflowReport(serviceCode, result) {
+    const handler = REPORT_HANDLERS[serviceCode];
+    if (handler == null) return result;
     const reportUrl = result.files.find((url) => /\.xlsx(?:$|\?)/i.test(url));
     if (result.status !== "completed" || !reportUrl) {
-      return { ...result, inspectionRows: [], report: null };
+      return { ...result, [handler.rowsKey]: [], report: null };
     }
     try {
-      const report = await fetchInspectionReport(reportUrl, this.fetchImpl);
-      return { ...result, inspectionRows: report.rows, report: { url: report.url, rowCount: report.rows.length } };
+      const report = await handler.fetch(reportUrl, this.fetchImpl);
+      return { ...result, [handler.rowsKey]: report.rows, report: { url: report.url, rowCount: report.rows.length } };
     } catch (error) {
       return {
         ...result,
-        inspectionRows: [],
+        [handler.rowsKey]: [],
         report: { url: reportUrl, rowCount: 0, error: error.message },
       };
     }
   }
 
-  async runProductDetailInspection(input = {}) {
-    const feedback = buildProductDetailInspectionFeedback(input);
-    const started = await this.run(PRODUCT_DETAIL_INSPECTION_SERVICE, {
+  async runMaterialCardWorkflow(serviceCode, feedback, input, inputSummary) {
+    const definition = this.getDefinition(serviceCode);
+    const started = await this.run(serviceCode, {
       timeoutMs: input.startTimeoutMs || 30_000,
     });
     const materialCard = started.toolCalls.find((toolCall) => toolCall.name === "material_card");
-    if (started.status !== "waiting_input" || materialCard == null) {
+    const actualCardId = materialCard?.arguments?.cardId;
+    if (
+      started.status !== "waiting_input"
+      || materialCard == null
+      || (actualCardId != null && String(actualCardId) !== definition.inputCardId)
+    ) {
       throw new GatewayError("Workflow did not request the expected material card", {
         code: "WORKFLOW_PROTOCOL_ERROR",
         status: 502,
-        details: { status: started.status },
+        details: { status: started.status, expectedCardId: definition.inputCardId },
       });
     }
-    const resumed = await this.run(PRODUCT_DETAIL_INSPECTION_SERVICE, {
+    const resumed = await this.run(serviceCode, {
       threadId: started.threadId,
       runId: started.runId,
       resume: true,
       feedback,
       timeoutMs: input.timeoutMs,
     });
-    const completed = await this.addInspectionReport(resumed);
+    const completed = await this.addWorkflowReport(serviceCode, resumed);
+    const handler = REPORT_HANDLERS[serviceCode];
     return {
-      serviceCode: PRODUCT_DETAIL_INSPECTION_SERVICE,
+      serviceCode,
       threadId: completed.threadId,
       runId: completed.runId,
       status: completed.status,
       error: completed.error,
       timedOut: completed.timedOut,
-      input: {
-        terminalTypes: feedback.terminalType,
-        inspectText: feedback.inspectElement,
-        locations: feedback.inspectLocationDesc,
-        skuIds: feedback.skuList.split("\n"),
-      },
+      input: inputSummary,
       summaries: completed.summaries,
-      inspectionRows: completed.inspectionRows,
+      ...(handler ? { [handler.rowsKey]: completed[handler.rowsKey] } : {}),
       report: completed.report,
       files: completed.files,
       resultCards: completed.resultCards,
       toolCalls: completed.toolCalls,
     };
   }
+
+  runProductDetailInspection(input = {}) {
+    const feedback = buildProductDetailInspectionFeedback(input);
+    return this.runMaterialCardWorkflow(PRODUCT_DETAIL_INSPECTION_SERVICE, feedback, input, {
+      terminalTypes: feedback.terminalType,
+      inspectText: feedback.inspectElement,
+      locations: feedback.inspectLocationDesc,
+      skuIds: feedback.skuList.split("\n"),
+    });
+  }
+
+  runMainImageInspection(input = {}) {
+    const feedback = buildMainImageInspectionFeedback(input);
+    return this.runMaterialCardWorkflow(MAIN_IMAGE_INSPECTION_SERVICE, feedback, input, {
+      terminalTypes: feedback.terminalType,
+      inspectElements: feedback.inspectElement,
+      imageNumbers: feedback.imageNum,
+      skuIds: feedback.skuList.split("\n"),
+    });
+  }
+
+  runImageDownload(input = {}) {
+    const feedback = buildImageDownloadFeedback(input);
+    return this.runMaterialCardWorkflow(IMAGE_DOWNLOAD_SERVICE, feedback, input, {
+      skuIds: feedback.inputValue.split("\n"),
+      squareImageIndexes: feedback.imageIndex.squareIndexList,
+      rectangleImageIndexes: feedback.imageIndex.rectangleIndexList,
+    });
+  }
+
 }

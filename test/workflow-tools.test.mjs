@@ -96,3 +96,77 @@ test("product detail inspection starts and resumes with fields at feedback root"
   assert.equal(result.status, "completed");
   assert.deepEqual(result.resultCards[0].content, { rows: [] });
 });
+
+test("typed product workflows submit their verified material cards", async (context) => {
+  const cases = [
+    {
+      method: "runMainImageInspection",
+      cardId: "402",
+      input: { skuIds: ["123"], inspectElements: ["京喜自营"], imageNumbers: [1] },
+      verify(feedback) {
+        assert.deepEqual(feedback.inspectElement, ["京喜自营"]);
+        assert.deepEqual(feedback.imageNum, ["1"]);
+      },
+    },
+    {
+      method: "runImageDownload",
+      cardId: "403",
+      input: { skuIds: ["123"], squareImageIndexes: [1] },
+      verify(feedback) {
+        assert.deepEqual(feedback.imageIndex, { squareIndexList: [1], rectangleIndexList: [] });
+      },
+    },
+  ];
+  for (const current of cases) await context.test(current.method, async () => {
+    const client = {
+      async call(request) {
+        if (request.api.endsWith("getAccessContext")) return { data: { userId: "u1" } };
+        if (request.api.endsWith("getSpecialist")) return { data: { name: "Tool" } };
+        return { data: { workflowId: "workflow-1", workflowVersion: "v1" } };
+      },
+    };
+    const requests = [];
+    const responses = [
+      [
+        'data: {"type":"RUN_STARTED","threadId":"t1","runId":"r1"}',
+        'data: {"type":"TOOL_CALL_START","toolCallId":"card-1","toolCallName":"material_card"}',
+        `data: {"type":"TOOL_CALL_ARGS","toolCallId":"card-1","delta":"{\\"cardId\\":\\"${current.cardId}\\"}"}`,
+        'data: {"type":"RUN_INTERRUPTED"}',
+        "",
+      ].join("\n\n"),
+      'data: {"type":"RUN_FINISHED"}\n\n',
+    ];
+    const transport = { async sendStream(request) {
+      requests.push(JSON.parse(request.body));
+      return new Response(responses.shift(), { status: 200 });
+    } };
+    const adapter = new WorkflowToolAdapter({ client, transport });
+    const result = await adapter[current.method](current.input);
+    assert.equal(result.status, "completed");
+    assert.equal(requests[1].resume, true);
+    current.verify(requests[1].feedback);
+  });
+});
+
+test("typed workflow stops when the input card protocol changes", async () => {
+  const client = {
+    async call(request) {
+      if (request.api.endsWith("getAccessContext")) return { data: { userId: "u1" } };
+      if (request.api.endsWith("getSpecialist")) return { data: { name: "Tool" } };
+      return { data: { workflowId: "workflow-1", workflowVersion: "v1" } };
+    },
+  };
+  const transport = { async sendStream() {
+    return new Response([
+      'data: {"type":"RUN_STARTED","threadId":"t1","runId":"r1"}',
+      'data: {"type":"TOOL_CALL_START","toolCallId":"card-1","toolCallName":"material_card"}',
+      'data: {"type":"TOOL_CALL_ARGS","toolCallId":"card-1","delta":"{\\"cardId\\":\\"changed\\"}"}',
+      'data: {"type":"RUN_INTERRUPTED"}',
+      "",
+    ].join("\n\n"), { status: 200 });
+  } };
+  const adapter = new WorkflowToolAdapter({ client, transport });
+  await assert.rejects(() => adapter.runImageDownload({ skuIds: ["123"], squareImageIndexes: [1] }), {
+    code: "WORKFLOW_PROTOCOL_ERROR",
+  });
+});

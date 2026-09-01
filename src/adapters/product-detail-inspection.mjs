@@ -28,12 +28,12 @@ function normalizeSelection(value, defaults, allowed, fieldName) {
   return values;
 }
 
-function normalizeSkuIds(input) {
+export function normalizeSkuIds(input, maxCount = 5000) {
   const source = Array.isArray(input.skuIds) ? input.skuIds.join("\n") : input.skuList;
   if (source == null) invalidInput("skuIds 或 skuList 必填");
   const skuIds = String(source).split(/[\s,，;；]+/u).map((item) => item.trim()).filter(Boolean);
   if (skuIds.length === 0) invalidInput("至少提供一个 SKU ID");
-  if (skuIds.length > 5000) invalidInput("SKU ID 不能超过 5000 个", { count: skuIds.length });
+  if (skuIds.length > maxCount) invalidInput(`SKU ID 不能超过 ${maxCount} 个`, { count: skuIds.length, maxCount });
   const invalid = skuIds.filter((skuId) => !/^\d+$/.test(skuId));
   if (invalid.length) invalidInput("SKU ID 只能包含数字", { invalid: invalid.slice(0, 10) });
   return [...new Set(skuIds)];
