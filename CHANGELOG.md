@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1 - 2026-09-01
+
+- Add sanitized task history with workflow result-reference extraction.
+
 ## 0.3.0 - 2026-09-01
 
 - Add local, privacy-safe XLSX preflight validation for 批量报名预约活动.

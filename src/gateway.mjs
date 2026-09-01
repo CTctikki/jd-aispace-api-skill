@@ -10,6 +10,7 @@ export class AiSpaceGateway {
     businessOpportunityAdapter = null,
     hostingAdapter = null,
     activitySignupAdapter = null,
+    taskHistoryAdapter = null,
   }) {
     this.client = client;
     this.catalog = catalog;
@@ -17,6 +18,7 @@ export class AiSpaceGateway {
     this.businessOpportunityAdapter = businessOpportunityAdapter;
     this.hostingAdapter = hostingAdapter;
     this.activitySignupAdapter = activitySignupAdapter;
+    this.taskHistoryAdapter = taskHistoryAdapter;
   }
 
   getRegistry() {
@@ -108,6 +110,11 @@ export class AiSpaceGateway {
   validateActivitySignupFile(input) {
     if (this.activitySignupAdapter === null) throw new Error("activity signup adapter is not configured");
     return this.activitySignupAdapter.validateFile(input);
+  }
+
+  listTasks(input) {
+    if (this.taskHistoryAdapter === null) throw new Error("task history adapter is not configured");
+    return this.taskHistoryAdapter.list(input);
   }
 
   prepareServiceLaunch(serviceCode, { confirm = false } = {}) {

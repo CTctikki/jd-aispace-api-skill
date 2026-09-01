@@ -87,6 +87,10 @@ These endpoints are read-only. Starting or changing continuous hosting, submitti
 
 `POST /v1/workflows/result` is read-only and does not require `confirm=true`.
 
+## Task History
+
+`GET /v1/tasks` lists sanitized AI Space tasks. Optional query parameters are `currentPage`, `pageSize` (maximum 100), `name`, `state`, and `scheduled=1`. For supported workflow detail URLs, each row includes a `workflow` object containing the `threadId` and `runId` needed by the result replay endpoint. Creator and modifier identities are omitted.
+
 ```json
 {
   "serviceCode": "FW_GOODS-1968206",

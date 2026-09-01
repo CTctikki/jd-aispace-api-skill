@@ -19,6 +19,7 @@ Use the bundled local gateway instead of clicking through the merchant UI. Keep 
 - Inspect 批量报名预约活动 input requirements with `GET /v1/activity-signup/schema`.
 - Validate a completed activity workbook locally with `POST /v1/activity-signup/validate` before requesting authorization to upload it.
 - Read an existing run with `POST /v1/workflows/result`.
+- Find prior tasks and reusable workflow references with `GET /v1/tasks`.
 - Use generic `POST /v1/workflows/run` only when its protocol is verified.
 - Read `references/api.md` for payloads and response fields.
 

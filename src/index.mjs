@@ -7,6 +7,7 @@ import { WorkflowToolAdapter } from "./adapters/workflow-tools.mjs";
 import { BusinessOpportunityAdapter } from "./adapters/business-opportunity.mjs";
 import { ActivitySignupAdapter } from "./adapters/activity-signup.mjs";
 import { HostingAdapter } from "./adapters/hosting.mjs";
+import { TaskHistoryAdapter } from "./adapters/tasks.mjs";
 import { DirectHttpTransport } from "./transports/direct-http.mjs";
 import { HttpBridgeTransport } from "./transports/http-bridge.mjs";
 import { ChromeProfileTransport } from "./transports/chrome-profile.mjs";
@@ -33,6 +34,7 @@ const gateway = new AiSpaceGateway({
   businessOpportunityAdapter: new BusinessOpportunityAdapter({ client, transport }),
   hostingAdapter: new HostingAdapter({ client }),
   activitySignupAdapter: new ActivitySignupAdapter({ client }),
+  taskHistoryAdapter: new TaskHistoryAdapter({ client }),
 });
 const server = createServer({ gateway, token: config.token });
 

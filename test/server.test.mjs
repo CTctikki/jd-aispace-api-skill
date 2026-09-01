@@ -182,3 +182,27 @@ test("hosting and activity schema endpoints are read-only", async () => {
     assert.deepEqual(await validation.json(), { valid: true, fileName: "activity.xlsx" });
   }, gateway);
 });
+
+test("task history endpoint is read-only and forwards filters", async () => {
+  let received;
+  const gateway = new AiSpaceGateway({
+    client: {},
+    taskHistoryAdapter: {
+      async list(input) { received = input; return { total: 0, tasks: [] }; },
+    },
+  });
+  await withServer(async (baseUrl) => {
+    const response = await fetch(`${baseUrl}/v1/tasks?pageSize=50&scheduled=1&name=主图`, {
+      headers: { authorization: "Bearer test-token" },
+    });
+    assert.equal(response.status, 200);
+    assert.deepEqual(await response.json(), { total: 0, tasks: [] });
+  }, gateway);
+  assert.deepEqual(received, {
+    currentPage: null,
+    pageSize: "50",
+    name: "主图",
+    state: null,
+    scheduled: "1",
+  });
+});

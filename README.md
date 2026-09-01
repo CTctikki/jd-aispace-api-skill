@@ -9,6 +9,7 @@
 | 能力 | 状态 |
 | --- | --- |
 | 动态发现官方工具、官方专家、已购服务和自建 Flow | 已支持 |
+| 历史任务查询及工作流结果引用恢复 | 已支持（只读） |
 | 已识别 6 类、26 个工具的基础目录 | 已支持 |
 | 4 个官方商品工作流元数据与 AG-UI 流协议 | 已支持 |
 | 商详信息 AI 全巡检自动启动、提交、结果重放 | 已支持 |
@@ -76,6 +77,7 @@ Invoke-RestMethod http://127.0.0.1:17321/v1/workflows/product-detail-inspection 
 - `POST /v1/workflows/image-download`
 - `POST /v1/business-opportunity/ask`
 - `POST /v1/workflows/result`（只读结果回放）
+- `GET /v1/tasks`（只读任务历史，可恢复工作流 `threadId/runId`）
 
 托管配置可通过 `GET /v1/hosting/:type` 查询；活动模板和文件预检使用 `GET /v1/activity-signup/schema` 与 `POST /v1/activity-signup/validate`。完整接口见 [`references/api.md`](references/api.md)。
 

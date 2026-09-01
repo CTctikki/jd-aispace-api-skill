@@ -67,6 +67,16 @@ export function createServer({ gateway, token = "" }) {
         });
         return sendJson(response, 200, result);
       }
+      if (request.method === "GET" && url.pathname === "/v1/tasks") {
+        const result = await gateway.listTasks({
+          currentPage: url.searchParams.get("currentPage"),
+          pageSize: url.searchParams.get("pageSize"),
+          name: url.searchParams.get("name"),
+          state: url.searchParams.get("state"),
+          scheduled: url.searchParams.get("scheduled"),
+        });
+        return sendJson(response, 200, result);
+      }
       if (request.method === "POST" && url.pathname === "/v1/workflows/inspect") {
         const body = await readJson(request);
         const result = await gateway.inspectWorkflow(body.serviceCode);
